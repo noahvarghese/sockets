@@ -1,0 +1,19 @@
+{
+  "name": "sockets",
+  "version": "1.0.0",
+  "description": "Emerging Web Technologies - Lab 3",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noahvarghese/sockets.git"
+  },
+  "author": "noahvarghese",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/noahvarghese/sockets/issues"
+  },
+  "homepage": "https://github.com/noahvarghese/sockets#readme"
+}

@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import Teacher from "./pages/Teacher";
-import Student from "./pages/Student";
 import Role from "./pages/Role";
-import ScreenName from "./pages/ScreenName";
-import ServerID from "./pages/ServerID";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
 	const [state, setState] = useState({
@@ -28,27 +25,24 @@ const App = () => {
 	return (
 		<Router>
 			{!state.name || !state.server || !state.role ? <h1>Welcome</h1> : null}
-			<Switch>
-				<Route
-					path="/"
-					exact
-					render={() => <Role setGlobalState={transferStateOnClick} />}
-				/>
-				<Route
-					path="/screenName"
-					exact
-					render={() => <ScreenName setGlobalState={transferStateOnClick} />}
-				/>
-				<Route
-					path="/serverID"
-					exact
-					render={() => (
-						<ServerID setGlobalState={transferStateOnClick} role={state.role} />
-					)}
-				/>
-				<Route path="/teacher" exact render={() => <Teacher />} />
-				<Route path="/student" exact render={() => <Student />} />
-			</Switch>
+			<ProtectedRoute tag="teacher" state={state} subProps={{}} />
+			<Route
+				path="/"
+				exact
+				render={() => <Role setGlobalState={transferStateOnClick} />}
+			/>
+			<ProtectedRoute
+				tag="screenName"
+				state={state}
+				subProps={{ setGlobalState: transferStateOnClick }}
+			/>
+			<ProtectedRoute
+				tag="serverID"
+				state={state}
+				subProps={{ setGlobalState: transferStateOnClick, role: state.role }}
+			/>
+			{/* <ProtectedRoute tag="teacher" state={state} subProps={{}} /> */}
+			<ProtectedRoute tag="student" state={state} subProps={{}} />
 		</Router>
 	);
 };

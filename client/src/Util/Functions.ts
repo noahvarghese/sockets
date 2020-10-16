@@ -24,23 +24,3 @@ export const setStateFromInputChange = (
 		[e.target.name]: e.target.value,
 	});
 };
-
-// React.Dispatch<React.SetStateAction<{
-//     name: string;
-//     role: string;
-//     server: string;
-// }>>
-
-// export const transferStateOnClick = (
-// 	e: React.MouseEvent,
-// 	key: String,
-// 	value: String,
-// 	setState: Function,
-// 	state: Object
-// ) => {
-// 	e.preventDefault();
-// 	setState({
-// 		...state,
-// 		[key as string]: value,
-// 	});
-// };

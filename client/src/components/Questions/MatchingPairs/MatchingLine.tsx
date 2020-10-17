@@ -13,7 +13,7 @@ const MatchingLine: React.FC<MatchingProps> = ({
 	});
 
 	return (
-		<>
+		<div>
 			<input
 				type="text"
 				name="property"
@@ -31,7 +31,7 @@ const MatchingLine: React.FC<MatchingProps> = ({
 				value={state.value as string}
 				onChange={(e) => setStateFromElementChange(e, setState, state)}
 			/>
-		</>
+		</div>
 	);
 };
 

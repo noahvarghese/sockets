@@ -16,7 +16,7 @@ const MultipleChoiceAnswer: React.FC<MCAnswerProps> = ({
 	});
 
 	return (
-		<>
+		<div>
 			<input
 				type="checkbox"
 				name="correct"
@@ -32,7 +32,7 @@ const MultipleChoiceAnswer: React.FC<MCAnswerProps> = ({
 				value={state.text as string}
 				onChange={(e) => setState({ ...state, text: e.target.value.trim() })}
 			/>
-		</>
+		</div>
 	);
 };
 

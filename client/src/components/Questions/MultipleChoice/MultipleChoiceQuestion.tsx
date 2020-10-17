@@ -2,7 +2,7 @@ import React from "react";
 
 const MultipleChoiceQuestion = () => {
 	return (
-		<>
+		<div>
 			<h3>Multiple Choice</h3>
 			<textarea
 				placeholder="What is the question?"
@@ -10,7 +10,7 @@ const MultipleChoiceQuestion = () => {
 				rows={5}
 				cols={50}
 			></textarea>
-		</>
+		</div>
 	);
 };
 

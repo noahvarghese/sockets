@@ -8,3 +8,42 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
+
+body {
+	background-color: #252c4a;
+}
+
+h1 {
+	color: #909ac3;
+}
+
+h2,
+h3 {
+	color: white;
+}
+
+li {
+	display: inline;
+}
+
+button:first-of-type {
+	margin-right: 1rem;
+}
+
+button {
+	cursor: pointer;
+	padding-left: 2rem;
+	padding-right: 2rem;
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+	border-radius: 1rem;
+	font-size: 1.5rem;
+	outline: none;
+	border: 5px solid #21486a;
+	color: white;
+	background-color: transparent;
+}
+
+button:hover {
+	background-color: rgba(255, 255, 255, 0.05);
+}

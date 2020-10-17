@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { setServer } from "../redux/actions";
 import { setStateFromElementChange } from "../Util/Functions";
 
-const ServerID = ({ role, setGlobalState, ...props }) => {
-	const key = "server";
+const ServerID = ({ role, setServer, ...props }) => {
 	const path = `/${role.toLowerCase()}`;
 
 	let history = useHistory();
@@ -28,7 +30,8 @@ const ServerID = ({ role, setGlobalState, ...props }) => {
 				type="submit"
 				value="Continue"
 				onClick={(e) => {
-					setGlobalState(e, key, state.serverID);
+					e.preventDefault();
+					setServer(state.serverID);
 					history.push(path);
 				}}
 			/>
@@ -36,4 +39,13 @@ const ServerID = ({ role, setGlobalState, ...props }) => {
 	);
 };
 
-export default ServerID;
+export default connect(
+	(state) => state.info,
+	(dispatch) =>
+		bindActionCreators(
+			{
+				setServer: setServer,
+			},
+			dispatch
+		)
+)(ServerID);

@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import { setStateFromElementChange } from "../Util/Functions";
+import { setName } from "../redux/actions";
 
-const ScreenName = ({ setGlobalState, ...props }) => {
-	const key = "name";
+const ScreenName = ({ setName, ...props }) => {
 	const path = "/serverID";
 
 	let history = useHistory();
@@ -26,8 +28,8 @@ const ScreenName = ({ setGlobalState, ...props }) => {
 			<input
 				type="submit"
 				value="Continue"
-				onClick={(e) => {
-					setGlobalState(e, key, state.screenName);
+				onClick={() => {
+					setName(state.screenName);
 					history.push(path);
 				}}
 			/>
@@ -35,4 +37,13 @@ const ScreenName = ({ setGlobalState, ...props }) => {
 	);
 };
 
-export default ScreenName;
+export default connect(
+	(_) => _,
+	(dispatch) =>
+		bindActionCreators(
+			{
+				setName: setName,
+			},
+			dispatch
+		)
+)(ScreenName);

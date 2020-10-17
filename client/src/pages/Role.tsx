@@ -1,8 +1,11 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { setRole } from "../redux/actions";
 
-const Role = ({ setGlobalState, ...props }) => {
-	const key = "role";
+const Role = ({ setRole, ...props }) => {
+	// const key = "role";
 	const path = "/screenName";
 	let history = useHistory();
 
@@ -14,7 +17,7 @@ const Role = ({ setGlobalState, ...props }) => {
 					<button
 						onClick={(e) => {
 							const role = "Teacher";
-							setGlobalState(e, key, role, path);
+							setRole(role);
 							history.push(path);
 						}}
 					>
@@ -25,7 +28,7 @@ const Role = ({ setGlobalState, ...props }) => {
 					<button
 						onClick={(e) => {
 							const role = "Student";
-							setGlobalState(e, key, role);
+							setRole(role);
 							history.push(path);
 						}}
 					>
@@ -37,4 +40,13 @@ const Role = ({ setGlobalState, ...props }) => {
 	);
 };
 
-export default Role;
+export default connect(
+	(state) => state,
+	(dispatch) =>
+		bindActionCreators(
+			{
+				setRole: setRole,
+			},
+			dispatch
+		)
+)(Role);

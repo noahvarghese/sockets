@@ -14,13 +14,25 @@ export const isEmpty = (jsonObject: Object): Boolean => {
 	return empty;
 };
 
-export const setStateFromInputChange = (
-	e: React.ChangeEvent<HTMLInputElement>,
+export const setStateFromElementChange = (
+	e: React.ChangeEvent,
 	setState: Function,
-	state: Object
+	state: Object,
+	name?: String
 ) => {
+	let event: React.ChangeEvent<
+		HTMLInputElement | HTMLSelectElement
+	> | null = null;
+
+	if (e.nativeEvent.type === "input") {
+		event = e as React.ChangeEvent<HTMLInputElement>;
+	} else if (e.nativeEvent.type === "change") {
+		event = e as React.ChangeEvent<HTMLSelectElement>;
+	}
+
 	setState({
 		...state,
-		[e.target.name]: e.target.value,
+		[event?.target.name!]: event?.target.value,
 	});
+	console.log(state);
 };

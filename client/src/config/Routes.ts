@@ -1,7 +1,7 @@
-import ScreenName from "./pages/ScreenName";
-import ServerID from "./pages/ServerID";
-import Student from "./pages/Student";
-import Teacher from "./pages/Teacher";
+import ScreenName from "../pages/ScreenName";
+import ServerID from "../pages/ServerID";
+import Student from "../pages/Student";
+import Teacher from "../pages/Teacher";
 
 const Routes = {
 	screenName: {

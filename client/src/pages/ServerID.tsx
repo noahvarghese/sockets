@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { setStateFromInputChange } from "../Util/Functions";
+import { setStateFromElementChange } from "../Util/Functions";
 
 const ServerID = ({ role, setGlobalState, ...props }) => {
 	const key = "server";
@@ -22,7 +22,7 @@ const ServerID = ({ role, setGlobalState, ...props }) => {
 				type="text"
 				aria-label="Server ID"
 				value={state.serverID}
-				onChange={(e) => setStateFromInputChange(e, setState, state)}
+				onChange={(e) => setStateFromElementChange(e, setState, state)}
 			/>
 			<input
 				type="submit"

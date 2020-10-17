@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import Role from "./pages/Role";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -8,6 +8,9 @@ const App = () => {
 		name: "",
 		role: "",
 		server: "",
+		questionType: "",
+		score: 0,
+		time: 0,
 	});
 
 	const transferStateOnClick = (
@@ -25,7 +28,6 @@ const App = () => {
 	return (
 		<Router>
 			{!state.name || !state.server || !state.role ? <h1>Welcome</h1> : null}
-			<ProtectedRoute tag="teacher" state={state} subProps={{}} />
 			<Route
 				path="/"
 				exact
@@ -41,8 +43,16 @@ const App = () => {
 				state={state}
 				subProps={{ setGlobalState: transferStateOnClick, role: state.role }}
 			/>
-			{/* <ProtectedRoute tag="teacher" state={state} subProps={{}} /> */}
-			<ProtectedRoute tag="student" state={state} subProps={{}} />
+			<ProtectedRoute
+				tag="teacher"
+				state={state}
+				subProps={{ setGlobalState: transferStateOnClick }}
+			/>
+			<ProtectedRoute
+				tag="student"
+				state={state}
+				subProps={{ setGlobalState: transferStateOnClick }}
+			/>
 		</Router>
 	);
 };

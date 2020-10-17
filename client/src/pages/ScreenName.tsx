@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { setStateFromInputChange } from "../Util/Functions";
+import { setStateFromElementChange } from "../Util/Functions";
 
 const ScreenName = ({ setGlobalState, ...props }) => {
 	const key = "name";
@@ -21,7 +21,7 @@ const ScreenName = ({ setGlobalState, ...props }) => {
 				type="text"
 				aria-label="Screen Name"
 				value={state.screenName}
-				onChange={(e) => setStateFromInputChange(e, setState, state)}
+				onChange={(e) => setStateFromElementChange(e, setState, state)}
 			/>
 			<input
 				type="submit"

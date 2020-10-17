@@ -3,7 +3,7 @@ export const isEmpty = (jsonObject: Object): Boolean => {
 
 	for (const key in jsonObject) {
 		if (
-			jsonObject[key] === "" ||
+			jsonObject[key].trim() === "" ||
 			jsonObject[key] === null ||
 			typeof jsonObject[key] === "undefined"
 		) {
@@ -34,5 +34,4 @@ export const setStateFromElementChange = (
 		...state,
 		[event?.target.name!]: event?.target.value,
 	});
-	console.log(state);
 };

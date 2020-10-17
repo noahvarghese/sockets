@@ -28,6 +28,7 @@ const MultipleChoiceAnswer: React.FC<MCAnswerProps> = ({
 				type="text"
 				name="answer"
 				aria-label="Answer"
+				placeholder="Answer"
 				value={state.text as string}
 				onChange={(e) => setState({ ...state, text: e.target.value.trim() })}
 			/>

@@ -26,15 +26,16 @@ const ServerID = ({ role, setServer, ...props }) => {
 				value={state.serverID}
 				onChange={(e) => setStateFromElementChange(e, setState, state)}
 			/>
-			<input
-				type="submit"
-				value="Continue"
+			<button
+				className="default"
 				onClick={(e) => {
 					e.preventDefault();
 					setServer(state.serverID);
 					history.push(path);
 				}}
-			/>
+			>
+				Continue
+			</button>
 		</>
 	);
 };

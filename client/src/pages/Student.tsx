@@ -4,6 +4,7 @@ const Student = () => {
 	return (
 		<div>
 			<h1>Student</h1>
+			<hr />
 		</div>
 	);
 };

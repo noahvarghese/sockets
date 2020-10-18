@@ -43,37 +43,41 @@ const CreateQuestion: React.FC<CreateQuestionProps> = ({ tag, ...props }) => {
 					<LineComponenent key={index} {...answer} />
 				))
 			)}
-			<button
-				onClick={() => {
-					setState({
-						...state,
-						// Don't use push as the state is immutable
-						// concat combines the array calling it and the array passed into the method
-						answers: state.answers.concat([emptyAnswerProps]),
-					});
-				}}
-			>
-				Add
-			</button>
-			{state.answers.length > 1 ? (
+			<div className="btnContainer">
 				<button
+					className="default"
 					onClick={() => {
-						let answersCopy: Array<MCAnswerProps | MatchingProps> = [];
-						for (let i = 0; i < state.answers.length; i++) {
-							if (i !== state.answers.length - 1) {
-								answersCopy.push(state.answers[i]);
-							} else break;
-						}
-
 						setState({
 							...state,
-							answers: answersCopy,
+							// Don't use push as the state is immutable
+							// concat combines the array calling it and the array passed into the method
+							answers: state.answers.concat([emptyAnswerProps]),
 						});
 					}}
 				>
-					Delete
+					Add
 				</button>
-			) : null}
+				{state.answers.length > 1 ? (
+					<button
+						className="secondary"
+						onClick={() => {
+							let answersCopy: Array<MCAnswerProps | MatchingProps> = [];
+							for (let i = 0; i < state.answers.length; i++) {
+								if (i !== state.answers.length - 1) {
+									answersCopy.push(state.answers[i]);
+								} else break;
+							}
+
+							setState({
+								...state,
+								answers: answersCopy,
+							});
+						}}
+					>
+						Delete
+					</button>
+				) : null}
+			</div>
 		</>
 	);
 };

@@ -15,6 +15,7 @@ const Role = ({ setRole, ...props }) => {
 			<ul>
 				<li>
 					<button
+						className="choice"
 						onClick={(e) => {
 							const role = "Teacher";
 							setRole(role);
@@ -26,6 +27,7 @@ const Role = ({ setRole, ...props }) => {
 				</li>
 				<li>
 					<button
+						className="choice"
 						onClick={(e) => {
 							const role = "Student";
 							setRole(role);

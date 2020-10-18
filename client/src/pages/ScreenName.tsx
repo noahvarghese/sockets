@@ -17,7 +17,6 @@ const ScreenName = ({ setName, ...props }) => {
 	return (
 		<>
 			<h2>Enter Your Screen Name</h2>
-			<p>(No spaces)</p>
 			<input
 				name="screenName"
 				type="text"
@@ -25,14 +24,15 @@ const ScreenName = ({ setName, ...props }) => {
 				value={state.screenName}
 				onChange={(e) => setStateFromElementChange(e, setState, state)}
 			/>
-			<input
-				type="submit"
-				value="Continue"
+			<button
+				className="default"
 				onClick={() => {
 					setName(state.screenName);
 					history.push(path);
 				}}
-			/>
+			>
+				Continue
+			</button>
 		</>
 	);
 };

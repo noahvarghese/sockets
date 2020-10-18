@@ -24,6 +24,7 @@ const MultipleChoiceAnswer: React.FC<MCAnswerProps> = ({
 				checked={state.correct as boolean}
 				onChange={() => setState({ ...state, correct: !state.correct })}
 			/>
+			<span className="checkmark"></span>
 			<input
 				type="text"
 				name="answer"

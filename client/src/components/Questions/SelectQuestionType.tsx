@@ -1,23 +1,48 @@
 import React, { useState } from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import Questions from "../../config/Questions";
-import { setStateFromElementChange } from "../../Util/Functions";
+import { isEmpty, setStateFromElementChange } from "../../Util/Functions";
 import CreateQuestion from "./CreateQuestion";
+import "../../assets/css/selectQuestion.css";
 
-const SelectQuestion = () => {
+const SelectQuestion = ({ addMatching, addMultipleChoice, ...props }) => {
 	const [state, setState] = useState({
 		questionType: "Select a question type",
 		time: null,
 		score: null,
-		answers: {},
+		answers: [{}],
+		enableSubmit: false,
 	});
+
+	let answersAreEmpty = false;
+
+	state.answers.forEach((answer) => {
+		if (isEmpty(answer)) {
+			answersAreEmpty = true;
+			return;
+		}
+	});
+
+	if (
+		(answersAreEmpty === false && state.enableSubmit === false) ||
+		(answersAreEmpty && state.enableSubmit)
+	) {
+		setState({
+			...state,
+			enableSubmit: !answersAreEmpty,
+		});
+	}
 
 	return (
 		<>
 			<h2>Post a question to students</h2>
-			<div>
+			<div className="selectQuestion">
 				<select
 					name="questionType"
-					onChange={(e) => setStateFromElementChange(e, setState, state)}
+					onChange={(e) => {
+						setStateFromElementChange(e, setState, state);
+					}}
 					value={state.questionType}
 				>
 					<option>Select a question type</option>
@@ -52,9 +77,20 @@ const SelectQuestion = () => {
 				</div>
 			) : null}
 
-			<button disabled>Send to Students</button>
+			<button
+				className="default"
+				disabled={!state.enableSubmit}
+				onClick={() => {
+					console.log(state);
+				}}
+			>
+				Send to Students
+			</button>
 		</>
 	);
 };
 
-export default SelectQuestion;
+export default connect(
+	(_) => _,
+	(dispatch) => bindActionCreators({}, dispatch)
+)(SelectQuestion);

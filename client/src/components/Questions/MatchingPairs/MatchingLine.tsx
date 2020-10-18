@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { setStateFromElementChange } from "../../../Util/Functions";
 import MatchingProps from "./MatchingProps";
+import "../../../assets/css/Matching.css";
 
 const MatchingLine: React.FC<MatchingProps> = ({
 	property,
@@ -13,7 +14,7 @@ const MatchingLine: React.FC<MatchingProps> = ({
 	});
 
 	return (
-		<div>
+		<div className="MatchingPair">
 			<input
 				type="text"
 				name="property"

@@ -5,6 +5,7 @@ const Teacher = (setGlobalState: Function, ...props) => {
 	return (
 		<div>
 			<h1>Teacher</h1>
+			<hr />
 			<SelectQuestionType />
 		</div>
 	);

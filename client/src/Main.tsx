@@ -4,17 +4,30 @@ import { bindActionCreators } from "redux";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Role from "./pages/Role";
 import ProtectedRoute from "./components/ProtectedRoute";
+import "./assets/css/root.css";
 
 const Main = ({ role, name, server, ...props }) => {
 	return (
-		<Router>
-			{!name || !server || !role ? <h1>Welcome</h1> : null}
-			<Route path="/" exact render={() => <Role />} />
-			<ProtectedRoute tag="screenName" />
-			<ProtectedRoute tag="serverID" />
-			<ProtectedRoute tag="teacher" />
-			<ProtectedRoute tag="student" />
-		</Router>
+		<>
+			<Router>
+				<div className="root">
+					{!name || !server || !role ? (
+						<>
+							<h1>Welcome</h1>
+							<hr />
+						</>
+					) : null}
+					<Route path="/" exact render={() => <Role />} />
+					<ProtectedRoute tag="screenName" />
+					<ProtectedRoute tag="serverID" />
+				</div>
+				<div className="home">
+					<ProtectedRoute tag="teacher" />
+					<ProtectedRoute tag="student" />
+				</div>
+			</Router>
+			<div className="background"></div>
+		</>
 	);
 };
 

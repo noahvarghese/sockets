@@ -40,5 +40,7 @@
 			"last 1 safari version"
 		]
 	},
-	"devDependencies": {}
+	"devDependencies": {
+		"@types/socket.io-client": "^1.4.34"
+	}
 }

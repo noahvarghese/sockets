@@ -3,14 +3,15 @@ import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { setServer } from "../redux/actions";
-import { setStateFromElementChange } from "../Util/Functions";
+import socketIOClient from "socket.io-client";
 
 const ServerID = ({ role, setServer, ...props }) => {
 	const path = "/home";
+	const socket = socketIOClient(process.env.REACT_APP_SOCKET_ENDPOINT!);
 
 	let history = useHistory();
 
-	const [state, setState] = useState({ serverID: "" });
+	const [state, setState] = useState({ serverID: "", error: "" });
 
 	return (
 		<>
@@ -24,15 +25,34 @@ const ServerID = ({ role, setServer, ...props }) => {
 				type="text"
 				aria-label="Server ID"
 				value={state.serverID}
-				onChange={(e) => setStateFromElementChange(e, setState, state)}
+				onChange={(e) => {
+					const server = e.target.value;
+					let error = "";
+					socket.emit("checkServer", server);
+					socket.on("checkServerResponse", (exists) => {
+						if (exists) {
+							error = "Server name already taken";
+						}
+
+						setState({
+							serverID: server,
+							error: error,
+						});
+					});
+				}}
 			/>
 			<button
 				className="default"
-				onClick={(e) => {
-					e.preventDefault();
-					setServer(state.serverID);
-					history.push(path);
+				onClick={() => {
+					socket.emit("createServer", state.serverID);
+					socket.on("createServerResponse", (err) => {
+						if (!err) {
+							setServer(state.serverID);
+							history.push(path);
+						}
+					});
 				}}
+				disabled={state.error !== ""}
 			>
 				Continue
 			</button>

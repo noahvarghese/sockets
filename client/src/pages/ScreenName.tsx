@@ -47,8 +47,8 @@ const ScreenName = ({ setName, ...props }) => {
 				onClick={() => {
 					if (state.error === "") {
 						socket.emit("createName", state.screenName);
-						socket.on("createNameResponse", (err) => {
-							if (!err) {
+						socket.on("createNameResponse", (success) => {
+							if (success) {
 								setName(state.screenName);
 								history.push(path);
 							}

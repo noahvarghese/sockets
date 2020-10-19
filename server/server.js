@@ -12,6 +12,7 @@ import {
     startRedisServer
 } from "./redis.js";
 import redis from "redis";
+import RedisAccess from "./Util/RedisAccess.js";
 
 const __filename = fileURLToPath(
     import.meta.url);
@@ -22,6 +23,8 @@ const __dirname = dirname(__filename);
     await startRedisServer();
 
     const client = redis.createClient();
+
+    const redisAccess = new RedisAccess();
 
     const app = express();
 
@@ -53,79 +56,29 @@ const __dirname = dirname(__filename);
         });
 
         socket.on("checkName", async (data) => {
-
-            let exists = false;
-
-            const response = await new Promise((res, rej) => {
-                client.sismember("names", data, (err, reply) => {
-                    res({
-                        err,
-                        reply
-                    });
-                });
-            });
-
-            if (response.reply !== 0) {
-                exists = true;
-            }
-
+            const exists = await redisAccess.queryField("names", data, true);
             io.to(socket.id).emit("checkNameResponse", exists);
         });
 
         socket.on("createName", async (data) => {
-            console.log(data);
-            let errors = false;
 
-            const exists = await new Promise((res, rej) => {
-                client.sismember("names", data, (err, reply) => {
-                    res({
-                        err,
-                        reply
-                    });
-                });
-            });
+            const success = redisAccess.createItem("names", data, true, socket.id);
 
-            console.log(exists.reply);
-
-            if (exists.reply === 0) {
-                const added = await new Promise((res, _) => {
-                    client.sadd("names", data, (err, reply) => res({
-                        err,
-                        reply
-                    }));
-                    client.set(socket.id, data);
-                });
-                console.log(added);
-
-                if (added.reply === 0) {
-                    errors = true;
-                }
-            }
-
-            io.to(socket.id).emit("createNameResponse", errors);
+            io.to(socket.id).emit("createNameResponse", success);
 
         });
 
         // 
         socket.on("disconnect", () => {
-            client.get(socket.id, (err, reply) => {
-                console.log(reply);
-                if (!err) {
-                    client.srem("names", reply, (err, _) => {
-                        if (!err) {
-                            client.del(socket.id);
-                        }
-                    });
+            client.get(socket.id, async (err, reply) => {
+                if (reply !== null) {
+                    if (await redisAccess.deleteItem("names", reply)) {
+                        await redisAccess.deleteItem(socket.id);
+                    }
                 }
             });
         });
     });
-
-    // const getApiAndEmit = socket => {
-    //     const response = "hi";
-    //     console.log(response);
-    //     socket.emit("FromAPI", response);
-    // }
 
     server.listen(4000, () => {
         console.log("listening on *:4000");

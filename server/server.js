@@ -53,7 +53,6 @@ const __dirname = dirname(__filename);
         });
 
         socket.on("checkName", async (data) => {
-            console.log(`Data: ${data}`);
 
             let exists = false;
 
@@ -66,8 +65,6 @@ const __dirname = dirname(__filename);
                 });
             });
 
-            console.log(response);
-
             if (response.reply !== 0) {
                 exists = true;
             }
@@ -76,16 +73,19 @@ const __dirname = dirname(__filename);
         });
 
         socket.on("createName", async (data) => {
+            console.log(data);
             let errors = false;
 
             const exists = await new Promise((res, rej) => {
-                client.scard("names", (err, reply) => {
+                client.sismember("names", data, (err, reply) => {
                     res({
                         err,
                         reply
                     });
                 });
             });
+
+            console.log(exists.reply);
 
             if (exists.reply === 0) {
                 const added = await new Promise((res, _) => {
@@ -94,22 +94,16 @@ const __dirname = dirname(__filename);
                         reply
                     }));
                 });
+                console.log(added);
 
                 if (added.reply === 0) {
                     errors = true;
                 }
             }
 
-            io.to(socket.id).emit("checkNameResponse", errors);
+            io.to(socket.id).emit("createNameResponse", errors);
 
         });
-
-        socket.on("getNames", () => {
-            client.get("names", (err, reply) => {
-                console.log(err);
-                console.log(reply);
-            })
-        })
 
         // 
         socket.on("disconnect", () => {

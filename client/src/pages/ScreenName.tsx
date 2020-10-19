@@ -30,7 +30,6 @@ const ScreenName = ({ setName, ...props }) => {
 					let error = "";
 					socket.emit("checkName", name);
 					socket.on("checkNameResponse", (exists) => {
-						console.log(exists);
 						if (exists) {
 							error = "Name already taken";
 						}
@@ -47,12 +46,13 @@ const ScreenName = ({ setName, ...props }) => {
 				className="default"
 				onClick={() => {
 					if (state.error === "") {
-						socket.on("connect", () => {
-							socket.emit("createName", state.screenName);
+						socket.emit("createName", state.screenName);
+						socket.on("createNameResponse", (err) => {
+							if (!err) {
+								setName(state.screenName);
+								history.push(path);
+							}
 						});
-						setName(state.screenName);
-						socket.emit("getNames");
-						// history.push(path);
 					}
 				}}
 				disabled={state.error !== ""}

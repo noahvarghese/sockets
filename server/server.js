@@ -38,12 +38,7 @@ const __dirname = dirname(__filename);
     });
 
     io.on("connection", socket => {
-        console.log("New client connected");
-
-        // test to see what data comes our way
-        socket.on("data", data => {
-            console.log(data);
-        });
+        console.log(`New client connected`);
 
         /**
          * should check if room exists
@@ -57,10 +52,68 @@ const __dirname = dirname(__filename);
             console.log(data);
         });
 
+        socket.on("checkName", async (data) => {
+            console.log(`Data: ${data}`);
+
+            let exists = false;
+
+            const response = await new Promise((res, rej) => {
+                client.sismember("names", data, (err, reply) => {
+                    res({
+                        err,
+                        reply
+                    });
+                });
+            });
+
+            console.log(response);
+
+            if (response.reply !== 0) {
+                exists = true;
+            }
+
+            io.to(socket.id).emit("checkNameResponse", exists);
+        });
+
+        socket.on("createName", async (data) => {
+            let errors = false;
+
+            const exists = await new Promise((res, rej) => {
+                client.scard("names", (err, reply) => {
+                    res({
+                        err,
+                        reply
+                    });
+                });
+            });
+
+            if (exists.reply === 0) {
+                const added = await new Promise((res, _) => {
+                    client.sadd("names", data, (err, reply) => res({
+                        err,
+                        reply
+                    }));
+                });
+
+                if (added.reply === 0) {
+                    errors = true;
+                }
+            }
+
+            io.to(socket.id).emit("checkNameResponse", errors);
+
+        });
+
+        socket.on("getNames", () => {
+            client.get("names", (err, reply) => {
+                console.log(err);
+                console.log(reply);
+            })
+        })
+
         // 
         socket.on("disconnect", () => {
             console.log("Client disconnected");
-            clearInterval(interval);
         });
     });
 

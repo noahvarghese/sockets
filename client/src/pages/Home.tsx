@@ -25,7 +25,7 @@ const Home = ({ info, multipleChoice, matching, ...props }) => {
 		socket.on("FromAPI", (data) => {
 			setResponse(data);
 		});
-	}, []);
+	});
 	return (
 		<>
 			<h1>{info.role.toUpperCase()}</h1>

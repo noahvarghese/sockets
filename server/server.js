@@ -93,6 +93,7 @@ const __dirname = dirname(__filename);
                         err,
                         reply
                     }));
+                    client.set(socket.id, data);
                 });
                 console.log(added);
 
@@ -107,7 +108,16 @@ const __dirname = dirname(__filename);
 
         // 
         socket.on("disconnect", () => {
-            console.log("Client disconnected");
+            client.get(socket.id, (err, reply) => {
+                console.log(reply);
+                if (!err) {
+                    client.srem("names", reply, (err, _) => {
+                        if (!err) {
+                            client.del(socket.id);
+                        }
+                    });
+                }
+            });
         });
     });
 

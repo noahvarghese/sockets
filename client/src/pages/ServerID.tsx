@@ -6,7 +6,7 @@ import { setServer } from "../redux/actions";
 import { setStateFromElementChange } from "../Util/Functions";
 
 const ServerID = ({ role, setServer, ...props }) => {
-	const path = `/${role.toLowerCase()}`;
+	const path = "/home";
 
 	let history = useHistory();
 

@@ -16,6 +16,7 @@ const initialState: state = {
 		role: "",
 		server: "",
 	},
+
 	multipleChoice: {
 		question: "",
 		answers: [],
@@ -26,7 +27,7 @@ const initialState: state = {
 	},
 };
 
-const reducer = (state = initialState, { type, payload }) => {
+const reducer = (state: state = initialState, { type, payload }) => {
 	switch (type) {
 		case ADD_NAME: {
 			return {
@@ -77,7 +78,7 @@ const reducer = (state = initialState, { type, payload }) => {
 			return {
 				...state,
 				matching: {
-					...state.matching.vals,
+					...state.matching,
 					properties: state.matching.properties.concat(payload),
 				},
 			};
@@ -86,7 +87,7 @@ const reducer = (state = initialState, { type, payload }) => {
 			return {
 				...state,
 				matching: {
-					...state.matching.properties,
+					...state.matching,
 					vals: state.matching.vals.concat(payload),
 				},
 			};

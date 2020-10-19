@@ -22,8 +22,7 @@ const Main = ({ role, name, server, ...props }) => {
 					<ProtectedRoute tag="serverID" />
 				</div>
 				<div className="home">
-					<ProtectedRoute tag="teacher" />
-					<ProtectedRoute tag="student" />
+					<ProtectedRoute tag="home" />
 				</div>
 			</Router>
 			<div className="background"></div>

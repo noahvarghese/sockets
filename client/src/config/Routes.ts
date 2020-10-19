@@ -1,7 +1,6 @@
+import Home from "../pages/Home";
 import ScreenName from "../pages/ScreenName";
 import ServerID from "../pages/ServerID";
-import Student from "../pages/Student";
-import Teacher from "../pages/Teacher";
 
 const Routes = {
 	screenName: {
@@ -14,14 +13,9 @@ const Routes = {
 		path: "/serverID",
 		required: ["role", "name"],
 	},
-	teacher: {
-		Component: Teacher,
-		path: "/teacher",
-		required: ["role", "name", "server"],
-	},
-	student: {
-		Component: Student,
-		path: "/student",
+	home: {
+		Component: Home,
+		path: "/home",
 		required: ["role", "name", "server"],
 	},
 };

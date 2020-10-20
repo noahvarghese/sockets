@@ -8,10 +8,9 @@ import {
 import http from "http";
 import socketIo from "socket.io";
 import cors from "cors";
-import redis from "socket.io-redis";
 import {
     startRedisServer
-} from "./redis.js";
+} from "./Util/redis.js";
 // import redis from "redis";
 import RedisAccess from "./Util/RedisAccess.js";
 import {
@@ -26,7 +25,6 @@ const __dirname = dirname(__filename);
 
     await startRedisServer();
 
-    // const client = redis.createClient();
 
     const redisAccess = new RedisAccess();
 
@@ -38,10 +36,6 @@ const __dirname = dirname(__filename);
 
     const server = http.createServer(app);
     const io = socketIo(server);
-    // io.adapter(redis({
-    //     host: "localhost",
-    //     port: 6379
-    // }));
 
     // Serve frontend
     app.get("/", (_, res) => {
@@ -49,17 +43,6 @@ const __dirname = dirname(__filename);
     });
 
     io.on("connection", socket => {
-
-        /**
-         * should check if room exists
-         * create room (rooms: String[] => [])
-         * assign teacher room
-         * key: room, value: teacher
-         */
-        socket.on("room", data => {
-            // query database for room
-            socket.join(data);
-        });
 
         socket.on("checkName", async (name) => {
             const exists = await redisAccess.queryField("names", name, true);
@@ -106,24 +89,24 @@ const __dirname = dirname(__filename);
             const name = await redisAccess.getValue(socket.id);
             const server = await redisAccess.getValue(name);
 
-            console.log(data);
-            await redisAccess.createItem(server, data);
-            socket.to(server).emit("sendQuestion", message);
+            await redisAccess.createItem(server, JSON.stringify(data));
+
+            socket.to(server).emit("sendQuestion", data);
             // io.to(server).emit("sendMessage", message);
         });
 
         socket.on("disconnect", async () => {
 
             // get values to delete
-            const name = (await redisAccess.getValue(socket.id)).reply;
-            const server = (await redisAccess.getValue(name)).reply;
+            const name = await redisAccess.getValue(socket.id);
+            const server = await redisAccess.getValue(name);
 
             if (!isEmpty(name) && !isEmpty(server)) {
                 // console.log(`Disconnect ${socket.id}: ${name}, ${server}`)
 
                 const headCount = io.sockets.adapter.rooms.length;
                 console.log(headCount);
-                if (headcount > 1) {
+                if (headCount > 1) {
                     // emit event to everyone in room
                     // frontend to direct suer back to serverID so that teacher can reconnect
                 }

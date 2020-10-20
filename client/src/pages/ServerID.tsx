@@ -58,6 +58,7 @@ const ServerID = ({ role, setServer, name, socket, ...props }) => {
 						});
 					} else if (role === "Student") {
 						socket.emit("joinServer", state.serverID);
+						setServer(state.serverID);
 						history.push(path);
 					}
 				}}

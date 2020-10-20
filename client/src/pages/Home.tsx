@@ -13,7 +13,7 @@ const Home = ({ info, multipleChoice, matching, socket, ...props }) => {
 	// });
 
 	useEffect(() => {
-		socket.on("sendMessage", (data) => {
+		socket.on("sendQuestion", (data) => {
 			console.log(data);
 			setResponse(data);
 		});
@@ -23,9 +23,7 @@ const Home = ({ info, multipleChoice, matching, socket, ...props }) => {
 			<h1>{info.role.toUpperCase()}</h1>
 			<hr />
 			{info.role === "Teacher" ? <SelectQuestionType socket={socket} /> : null}
-			<span>
-				{!isEmpty(JSON.stringify(response)) ? JSON.stringify(response) : null}
-			</span>
+			<span>{response ? JSON.stringify(response) : null}</span>
 		</>
 	);
 };

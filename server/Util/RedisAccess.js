@@ -17,17 +17,14 @@ export default class RedisAccess {
 
             if (set) {
                 this.client.sismember(key, value, (err, reply) => {
-                    res({
-                        err,
-                        reply
-                    });
+                    res(reply);
                 });
             } else {
                 res(this.getValue(key));
             }
         });
 
-        if ((set && response.reply > 0) || (!set && response.reply !== null)) {
+        if ((set && response > 0) || (!set && response !== null)) {
             exists = true;
         }
 
@@ -53,6 +50,9 @@ export default class RedisAccess {
             }
             const result = await new Promise((res, rej) => {
                 this.client[method](key, value, async (err, reply) => {
+                    if (err) {
+                        console.log(err);
+                    }
                     if (!err && reply === 1 && secondaryKey !== null) {
                         res(await this.createItem(secondaryKey, value));
                     }
@@ -80,7 +80,7 @@ export default class RedisAccess {
             });
         });
 
-        return value;
+        return value.reply;
     }
 
     deleteItem = async (key, value = null) => {
@@ -91,7 +91,6 @@ export default class RedisAccess {
                 });
             } else {
                 this.client.del(key, (err, _) => {
-                    console.log(key, err);
                     res(!err);
                 });
             }

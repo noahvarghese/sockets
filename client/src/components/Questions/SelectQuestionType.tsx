@@ -87,10 +87,8 @@ const SelectQuestion = ({
 				className="default"
 				disabled={!state.enableSubmit}
 				onClick={() => {
-					console.log(state);
-					socket.emit("sendMessage", [
+					socket.emit("createQuestion", [
 						{
-							server: info.server,
 							message: { matching: matching, multipleChoice: multipleChoice },
 						},
 					]);

@@ -11,7 +11,7 @@ import cors from "cors";
 import {
     startRedisServer
 } from "./redis.js";
-import redis from "redis";
+// import redis from "redis";
 import RedisAccess from "./Util/RedisAccess.js";
 
 const __filename = fileURLToPath(
@@ -22,7 +22,7 @@ const __dirname = dirname(__filename);
 
     await startRedisServer();
 
-    const client = redis.createClient();
+    // const client = redis.createClient();
 
     const redisAccess = new RedisAccess();
 
@@ -41,7 +41,7 @@ const __dirname = dirname(__filename);
     });
 
     io.on("connection", socket => {
-        console.log(`New client connected`);
+        console.log(`New client connected ${socket.id}`);
 
         /**
          * should check if room exists
@@ -55,28 +55,50 @@ const __dirname = dirname(__filename);
             console.log(data);
         });
 
-        socket.on("checkName", async (data) => {
-            const exists = await redisAccess.queryField("names", data, true);
+        socket.on("checkName", async (name) => {
+            const exists = await redisAccess.queryField("names", name, true);
             io.to(socket.id).emit("checkNameResponse", exists);
         });
 
-        socket.on("createName", async (data) => {
-
-            const success = redisAccess.createItem("names", data, true, socket.id);
-
+        socket.on("createName", async (name) => {
+            const success = redisAccess.createItem("names", name, true);
             io.to(socket.id).emit("createNameResponse", success);
+        });
 
+        socket.on("checkServer", async (server) => {
+            const exists = await redisAccess.queryField("servers", server, true);
+            io.to(socket.id).emit("checkServerResponse", exists);
+        });
+
+        socket.on("createServer", async (data) => {
+            // console.log(data);
+            const {
+                name,
+                server
+            } = data[0];
+            const success = redisAccess.createItem("servers", server, true, name);
+            io.to(socket.id).emit("createServerResponse", success);
         });
 
         // 
+        socket.on("cleanup", async ({
+            name,
+            server
+        }) => {
+            console.log(name, server);
+
+            if (typeof name !== "undefined" && typeof server !== "undefined") {
+                let success = false;
+
+                success = await redisAccess.deleteItem("names", name);
+                success = await redisAccess.deleteItem("servers", server);
+                success = await redisAccess.deleteItem(name);
+                console.log(`Deleted ${name}, ${server}: ${success}`);
+            }
+        });
+
         socket.on("disconnect", () => {
-            client.get(socket.id, async (err, reply) => {
-                if (reply !== null) {
-                    if (await redisAccess.deleteItem("names", reply)) {
-                        await redisAccess.deleteItem(socket.id);
-                    }
-                }
-            });
+            // console.log("client disconnected");
         });
     });
 

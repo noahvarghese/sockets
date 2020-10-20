@@ -22,12 +22,7 @@ export default class RedisAccess {
                     });
                 });
             } else {
-                this.client.get(key, (err, reply) => {
-                    res({
-                        err,
-                        reply
-                    });
-                });
+                res(this.getValue(key));
             }
         });
 
@@ -38,7 +33,7 @@ export default class RedisAccess {
         return exists;
     }
 
-    createItem = async (key, value, set = false, socketId = null) => {
+    createItem = async (key, value, set = false, secondaryKey = null) => {
 
         let success = false;
 
@@ -52,16 +47,14 @@ export default class RedisAccess {
                 if (set) {
 
                     this.client.sadd(key, value, (err, reply) => {
-                        console.log(reply);
 
-                        if (!err && reply === 1) {
+                        if (!err && reply === 1 && secondaryKey !== null) {
                             // so we can identify user specific fields by socket id
                             // used to free up screen name when client disconnects
-                            this.createItem(socketId, value);
+                            this.createItem(secondaryKey, value);
                         }
                     });
                 } else {
-                    console.log(`Key: ${key}\nValue: ${value}`);
                     this.client.set(key, value, (err, reply) => {
                         res({
                             err,
@@ -79,8 +72,20 @@ export default class RedisAccess {
         return success;
     }
 
+    getValue = async (key) => {
+        const value = await new Promise((res, rej) => {
+            this.client.get(key, (err, reply) => {
+                res({
+                    err,
+                    reply
+                });
+            });
+        });
+
+        return value;
+    }
+
     deleteItem = async (key, value = null) => {
-        console.log(`Key: ${key}\nValue: ${value}`)
         const removed = await new Promise((res, _) => {
             if (value !== null) {
                 this.client.srem(key, value, (err, _) => {
@@ -88,6 +93,7 @@ export default class RedisAccess {
                 });
             } else {
                 this.client.del(key, (err, _) => {
+                    console.log(key, err);
                     res(!err);
                 });
             }

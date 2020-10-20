@@ -3,12 +3,10 @@ import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { setName } from "../redux/actions";
-import socketIOClient from "socket.io-client";
-import "dotenv/config";
+import { socket } from "../config/Socket";
 
 const ScreenName = ({ setName, ...props }) => {
 	const path = "/serverID";
-	const socket = socketIOClient(process.env.REACT_APP_SOCKET_ENDPOINT!);
 
 	let history = useHistory();
 
@@ -16,6 +14,7 @@ const ScreenName = ({ setName, ...props }) => {
 		screenName: "",
 		error: "",
 	});
+	console.log(socket.id);
 
 	return (
 		<>

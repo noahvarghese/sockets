@@ -3,13 +3,12 @@ import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { setServer } from "../redux/actions";
-import { socket } from "../config/Socket";
+// import { socket } from "../config/Socket";
 
-const ServerID = ({ role, setServer, name, ...props }) => {
+const ServerID = ({ role, setServer, name, socket, ...props }) => {
 	const path = "/home";
 
 	let history = useHistory();
-	console.log(socket.id);
 
 	const [state, setState] = useState({ serverID: "", error: "" });
 
@@ -27,27 +26,23 @@ const ServerID = ({ role, setServer, name, ...props }) => {
 				value={state.serverID}
 				onChange={(e) => {
 					const server = e.target.value;
-					if (role === "Teacher") {
-						let error = "";
-						socket.emit("checkServer", server);
-						socket.on("checkServerResponse", (exists) => {
-							if (exists) {
-								error = "Server name already taken";
-							}
+					let error = "";
+					socket.emit("checkServer", server);
+					socket.on("checkServerResponse", (exists) => {
+						if (exists && role === "Teacher") {
+							error = "Server name already taken";
+						} else if (!exists && role === "Student") {
+							error = "Server does not exist, check your spelling or retry.";
+						}
 
-							setState({
-								serverID: server,
-								error: error,
-							});
-						});
-					} else if (role === "Student") {
 						setState({
-							...state,
 							serverID: server,
+							error: error,
 						});
-					}
+					});
 				}}
 			/>
+			<span className="error">{state.error}</span>
 			<button
 				className="default"
 				onClick={() => {
@@ -62,15 +57,11 @@ const ServerID = ({ role, setServer, name, ...props }) => {
 							}
 						});
 					} else if (role === "Student") {
-						socket.emit("addToServer", (success) => {
-							if (success) {
-								setServer(state.serverID);
-								history.push(path);
-							}
-						});
+						socket.emit("joinServer", state.serverID);
+						history.push(path);
 					}
 				}}
-				disabled={state.error !== ""}
+				disabled={state.error !== "" || state.serverID === ""}
 			>
 				Continue
 			</button>

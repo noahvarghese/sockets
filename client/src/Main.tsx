@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import Role from "./pages/Role";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./assets/css/root.css";
+import { socket } from "./config/Socket";
 
 const Main = ({ role, name, server, ...props }) => {
 	return (
@@ -18,11 +19,11 @@ const Main = ({ role, name, server, ...props }) => {
 						</>
 					) : null}
 					<Route path="/" exact render={() => <Role />} />
-					<ProtectedRoute tag="screenName" />
-					<ProtectedRoute tag="serverID" />
+					<ProtectedRoute tag="screenName" subProps={{ socket: socket }} />
+					<ProtectedRoute tag="serverID" subProps={{ socket: socket }} />
 				</div>
 				<div className="home">
-					<ProtectedRoute tag="home" />
+					<ProtectedRoute tag="home" subProps={{ socket: socket }} />
 				</div>
 			</Router>
 			<div className="background"></div>

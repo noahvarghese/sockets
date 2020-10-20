@@ -1,7 +1,8 @@
-import e, {
-    response
-} from "express";
 import redis from "redis";
+import {
+    isEmpty,
+    isValidResponse
+} from "./Functions.js";
 
 export default class RedisAccess {
 
@@ -35,41 +36,38 @@ export default class RedisAccess {
 
     createItem = async (key, value, set = false, secondaryKey = null) => {
 
-        let success = false;
+        // let success = false;
 
         const exists = await this.queryField(key, value, set);
 
 
         if (exists === false) {
 
-            const added = await new Promise((res, _) => {
+            let method;
+            let success = false;
 
-                if (set) {
-
-                    this.client.sadd(key, value, (err, reply) => {
-
-                        if (!err && reply === 1 && secondaryKey !== null) {
-                            // so we can identify user specific fields by socket id
-                            // used to free up screen name when client disconnects
-                            this.createItem(secondaryKey, value);
-                        }
+            if (set) {
+                method = "sadd";
+            } else {
+                method = "set";
+            }
+            const result = await new Promise((res, rej) => {
+                this.client[method](key, value, async (err, reply) => {
+                    if (!err && reply === 1 && secondaryKey !== null) {
+                        res(await this.createItem(secondaryKey, value));
+                    }
+                    res({
+                        err,
+                        reply
                     });
-                } else {
-                    this.client.set(key, value, (err, reply) => {
-                        res({
-                            err,
-                            reply
-                        });
-                    });
-                }
+                });
             });
 
-            if (added.reply === 0 && !added.err) {
+            if ((isValidResponse(result.reply) || isValidResponse(result)) && isEmpty(result.err)) {
                 success = true;
             }
+            return success;
         }
-
-        return success;
     }
 
     getValue = async (key) => {

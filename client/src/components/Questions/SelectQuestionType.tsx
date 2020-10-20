@@ -6,7 +6,13 @@ import { isEmpty, setStateFromElementChange } from "../../Util/Functions";
 import CreateQuestion from "./CreateQuestion";
 import "../../assets/css/selectQuestion.css";
 
-const SelectQuestion = ({ addMatching, addMultipleChoice, ...props }) => {
+const SelectQuestion = ({
+	/*addMatching, addMultipleChoice,*/ info,
+	multipleChoice,
+	matching,
+	socket,
+	...props
+}) => {
 	const [state, setState] = useState({
 		questionType: "Select a question type",
 		time: null,
@@ -82,6 +88,12 @@ const SelectQuestion = ({ addMatching, addMultipleChoice, ...props }) => {
 				disabled={!state.enableSubmit}
 				onClick={() => {
 					console.log(state);
+					socket.emit("sendMessage", [
+						{
+							server: info.server,
+							message: { matching: matching, multipleChoice: multipleChoice },
+						},
+					]);
 				}}
 			>
 				Send to Students
@@ -91,6 +103,6 @@ const SelectQuestion = ({ addMatching, addMultipleChoice, ...props }) => {
 };
 
 export default connect(
-	(_) => _,
+	(state) => state,
 	(dispatch) => bindActionCreators({}, dispatch)
 )(SelectQuestion);

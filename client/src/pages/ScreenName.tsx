@@ -3,9 +3,9 @@ import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { setName } from "../redux/actions";
-import { socket } from "../config/Socket";
+// import { socket } from "../config/Socket";
 
-const ScreenName = ({ setName, ...props }) => {
+const ScreenName = ({ role, setName, socket, ...props }) => {
 	const path = "/serverID";
 
 	let history = useHistory();
@@ -14,7 +14,6 @@ const ScreenName = ({ setName, ...props }) => {
 		screenName: "",
 		error: "",
 	});
-	console.log(socket.id);
 
 	return (
 		<>
@@ -45,16 +44,22 @@ const ScreenName = ({ setName, ...props }) => {
 				className="default"
 				onClick={() => {
 					if (state.error === "") {
-						socket.emit("createName", state.screenName);
+						socket.emit("createName", [{ name: state.screenName, role: role }]);
+						// socket.emit("createName", state.screenName);
 						socket.on("createNameResponse", (success) => {
 							if (success) {
 								setName(state.screenName);
 								history.push(path);
+							} else {
+								setState({
+									...state,
+									error: "This name is taken, please try another",
+								});
 							}
 						});
 					}
 				}}
-				disabled={state.error !== ""}
+				disabled={state.error !== "" || state.screenName === ""}
 			>
 				Continue
 			</button>
@@ -63,7 +68,9 @@ const ScreenName = ({ setName, ...props }) => {
 };
 
 export default connect(
-	(_) => _,
+	(state) => {
+		return { role: state.info.role };
+	},
 	(dispatch) =>
 		bindActionCreators(
 			{

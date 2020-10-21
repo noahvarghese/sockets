@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import Questions from "../../config/Questions";
-import { setStateFromElementChange } from "../../Util/Functions";
 import "../../assets/css/selectQuestion.css";
 import { setInfo } from "../../redux/actions";
 import MultipleChoiceQuestion from "./MultipleChoice/MultipleChoiceQuestion";
@@ -111,8 +110,6 @@ const SelectQuestion = ({
 	if (key !== "") {
 		length = state[key][secondaryKey].length;
 	}
-	console.log(questionsAreEmpty, state.info);
-	console.log(state[key]);
 
 	const enableSubmit =
 		!questionsAreEmpty &&
@@ -197,7 +194,7 @@ const SelectQuestion = ({
 			<>
 				{state.info.type === "Multiple Choice" ? (
 					<>
-						<MultipleChoiceQuestion setQuestion={setQuestion} />
+						<MultipleChoiceQuestion setQuestion={setQuestion} question="" />
 						<h3>Answers</h3>
 					</>
 				) : null}
@@ -331,15 +328,11 @@ const SelectQuestion = ({
 
 					const data = [
 						{
-							question: {
-								info: info,
-								matching: question.matching,
-								multipleChoice: question.multipleChoice,
-							},
+							info: state.info,
+							matching: state.matching,
+							multipleChoice: state.multipleChoice,
 						},
 					];
-
-					console.log(data);
 
 					socket.emit("createQuestion", data);
 				}}

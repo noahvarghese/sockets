@@ -6,7 +6,8 @@ interface MatchingProps {
 		value?: String;
 	};
 	index?: Number;
-	setMatching: Function;
+	setMatching?: Function;
+	readOnly: boolean | null;
 }
 
 export default MatchingProps;

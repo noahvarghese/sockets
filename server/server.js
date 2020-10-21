@@ -88,11 +88,32 @@ const __dirname = dirname(__filename);
         socket.on("createQuestion", async data => {
             const name = await redisAccess.getValue(socket.id);
             const server = await redisAccess.getValue(name);
-            console.log(data);
 
             await redisAccess.createItem(server, JSON.stringify(data));
 
-            socket.to(server).emit("sendQuestion", data);
+            // remove correct field from data
+            let studentData = {
+                info: data[0].info,
+                matching: data[0].matching,
+                multipleChoice: {
+                    question: data[0].multipleChoice.question,
+                    answers: undefined
+                }
+            };
+
+            if (data[0].info.type === "Multiple Choice") {
+                let studentVersion = [];
+                data[0].multipleChoice.answers.forEach((answer, index) => {
+                    studentVersion.push({
+                        answer: answer.answer,
+                        correct: false
+                    });
+                });
+
+                studentData.multipleChoice.answers = studentVersion;
+            }
+
+            socket.to(server).emit("sendQuestion", studentData);
             // io.to(server).emit("sendMessage", message);
         });
 
@@ -101,6 +122,7 @@ const __dirname = dirname(__filename);
             // get values to delete
             const name = await redisAccess.getValue(socket.id);
             const server = await redisAccess.getValue(name);
+            console.log("NAme: ", name)
 
             if (!isEmpty(name) && !isEmpty(server)) {
                 // console.log(`Disconnect ${socket.id}: ${name}, ${server}`)

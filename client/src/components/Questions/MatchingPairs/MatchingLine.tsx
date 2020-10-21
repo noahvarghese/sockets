@@ -12,6 +12,7 @@ const MatchingLine: React.FC<MatchingProps> = ({
 	matching,
 	index,
 	setMatching,
+	readOnly,
 	...props
 }) => {
 	const [state, setState] = useState({
@@ -25,9 +26,12 @@ const MatchingLine: React.FC<MatchingProps> = ({
 				: "",
 	});
 
+	console.log(state);
+
 	return (
 		<div className="MatchingPair">
 			<input
+				readOnly={readOnly!}
 				type="text"
 				name="property"
 				aria-label="Matching Key"
@@ -35,21 +39,29 @@ const MatchingLine: React.FC<MatchingProps> = ({
 				value={state.property as string}
 				onChange={(e) => {
 					setStateFromElementChange(e, setState, state);
-					addMatchingProperty!(state.property);
-					setMatching({ property: e.target.value, val: state.value }, index);
+					if (!readOnly) {
+						addMatchingProperty!(state.property);
+						setMatching!({ property: e.target.value, val: state.value }, index);
+					}
 				}}
 			/>
 			<span>=</span>
 			<input
+				readOnly={readOnly!}
 				type="text"
 				name="value"
 				aria-label="Matching Value"
 				placeholder="B"
 				value={state.value as string}
 				onChange={(e) => {
-					setStateFromElementChange(e, setState, state);
-					addMatchingValue!(state.value);
-					setMatching({ property: state.property, val: e.target.value }, index);
+					if (!readOnly) {
+						setStateFromElementChange(e, setState, state);
+						addMatchingValue!(state.value);
+						setMatching!(
+							{ property: state.property, val: e.target.value },
+							index
+						);
+					}
 				}}
 			/>
 		</div>

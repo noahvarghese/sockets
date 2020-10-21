@@ -1,32 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import DisplayQuestion from "../components/Questions/DisplayQuestion";
 import SelectQuestionType from "../components/Questions/SelectQuestionType";
 import { addQuestion } from "../redux/actions";
 // import state from "../components/StateProps";
 
 const Home = ({ info, question, socket, ...props }) => {
-	const [response, setResponse] = useState<String | Object>("");
-
-	useEffect(() => {
-		socket.on("sendQuestion", (data) => {
-			console.log(data[0].question);
-			addQuestion(data[0].question);
-			setResponse(data[0].question);
-		});
-	});
 	return (
 		<>
 			<h1>{info.role.toUpperCase()}</h1>
 			<hr />
-			{info.role === "Teacher" ? <SelectQuestionType socket={socket} /> : null}
-			<span>
-				{response ? (
-					JSON.stringify(response)
-				) : info.role === "Teacher" ? null : (
-					<h3>Waiting for question...</h3>
-				)}
-			</span>
+			{info.role === "Teacher" ? (
+				<SelectQuestionType socket={socket} />
+			) : (
+				<DisplayQuestion socket={socket} />
+			)}
 		</>
 	);
 };

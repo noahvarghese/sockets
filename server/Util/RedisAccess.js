@@ -63,9 +63,21 @@ export default class RedisAccess {
                 });
             });
 
-            if ((isValidResponse(result.reply) || isValidResponse(result)) && isEmpty(result.err)) {
-                success = true;
+
+            // bug where on page refresh assignment doesn't work?
+            // result returns undefined
+            // maybe something not being deleted?
+
+            if (typeof result === "object") {
+                if (isValidResponse(result.reply) && isEmpty(result.err)) {
+                    success = true;
+                }
+            } else {
+                if (isValidResponse(result)) {
+                    success = true;
+                }
             }
+            console.log(success);
             return success;
         }
     }

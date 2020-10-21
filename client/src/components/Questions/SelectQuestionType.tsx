@@ -5,6 +5,7 @@ import Questions from "../../config/Questions";
 import { isEmpty, setStateFromElementChange } from "../../Util/Functions";
 import CreateQuestion from "./CreateQuestion";
 import "../../assets/css/selectQuestion.css";
+import { time } from "console";
 
 const SelectQuestion = ({
 	/*addMatching, addMultipleChoice,*/ info,
@@ -89,7 +90,12 @@ const SelectQuestion = ({
 				onClick={() => {
 					socket.emit("createQuestion", [
 						{
-							message: { matching: matching, multipleChoice: multipleChoice },
+							question: {
+								time: state.time,
+								score: state.score,
+								matching: matching,
+								multipleChoice: multipleChoice,
+							},
 						},
 					]);
 				}}

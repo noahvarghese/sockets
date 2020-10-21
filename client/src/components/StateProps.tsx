@@ -3,6 +3,13 @@ interface info {
 	role: String;
 	server: String;
 }
+interface question {
+	type: String;
+	time: Number;
+	score: Number;
+	matching: matching;
+	multipleChoice: mc;
+}
 
 interface mc {
 	question: String;
@@ -16,8 +23,7 @@ interface matching {
 
 interface state {
 	info: info;
-	multipleChoice: mc;
-	matching: matching;
+	question: question;
 }
 
 export default state;

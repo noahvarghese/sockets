@@ -6,7 +6,7 @@ import { isEmpty } from "../Util/Functions";
 // import state from "../components/StateProps";
 
 const Home = ({ info, multipleChoice, matching, socket, ...props }) => {
-	const [response, setResponse] = useState("");
+	const [response, setResponse] = useState<String | Object>("");
 	// socket.on("sendMessage", (data) => {
 	// 	console.log(data);
 	// 	setResponse(data);
@@ -14,8 +14,8 @@ const Home = ({ info, multipleChoice, matching, socket, ...props }) => {
 
 	useEffect(() => {
 		socket.on("sendQuestion", (data) => {
-			console.log(data);
-			setResponse(data);
+			console.log(data[0].message);
+			setResponse({ question: data[0].message });
 		});
 	});
 	return (
@@ -23,7 +23,13 @@ const Home = ({ info, multipleChoice, matching, socket, ...props }) => {
 			<h1>{info.role.toUpperCase()}</h1>
 			<hr />
 			{info.role === "Teacher" ? <SelectQuestionType socket={socket} /> : null}
-			<span>{response ? JSON.stringify(response) : null}</span>
+			<span>
+				{response ? (
+					JSON.stringify(response)
+				) : info.role === "Teacher" ? null : (
+					<h3>Waiting for question...</h3>
+				)}
+			</span>
 		</>
 	);
 };

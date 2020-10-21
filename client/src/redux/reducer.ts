@@ -6,6 +6,9 @@ import {
 	ADD_MATCHING_VALUE,
 	ADD_MULTIPLECHOICE_QUESTION,
 	ADD_MULTIPLECHOICE_ANSWER,
+	ADD_QUESTION,
+	ADD_MATCHING,
+	ADD_MULTIPLECHOICE,
 } from "./actionTypes";
 
 import state from "../components/StateProps";
@@ -16,14 +19,18 @@ const initialState: state = {
 		role: "",
 		server: "",
 	},
-
-	multipleChoice: {
-		question: "",
-		answers: [],
-	},
-	matching: {
-		properties: [],
-		vals: [],
+	question: {
+		type: "",
+		time: 0,
+		score: 0,
+		multipleChoice: {
+			question: "",
+			answers: [],
+		},
+		matching: {
+			properties: [],
+			vals: [],
+		},
 	},
 };
 
@@ -59,36 +66,72 @@ const reducer = (state: state = initialState, { type, payload }) => {
 		case ADD_MULTIPLECHOICE_QUESTION: {
 			return {
 				...state,
-				multipleChoice: {
-					...state.multipleChoice,
-					question: payload,
+				question: {
+					...state.question,
+					multipleChoice: {
+						...state.question.multipleChoice,
+						question: payload,
+					},
 				},
 			};
 		}
 		case ADD_MULTIPLECHOICE_ANSWER: {
 			return {
 				...state,
-				multipleChoice: {
-					...state.multipleChoice,
-					answers: state.multipleChoice.answers.concat(payload),
+				question: {
+					...state.question,
+					multipleChoice: {
+						...state.question.multipleChoice,
+						answers: state.question.multipleChoice.answers.concat(payload),
+					},
 				},
 			};
 		}
 		case ADD_MATCHING_PROPERTY: {
 			return {
 				...state,
-				matching: {
-					...state.matching,
-					properties: state.matching.properties.concat(payload),
+				question: {
+					...state.question,
+					matching: {
+						...state.question.matching,
+						properties: state.question.matching.properties.concat(payload),
+					},
 				},
 			};
 		}
 		case ADD_MATCHING_VALUE: {
 			return {
 				...state,
-				matching: {
-					...state.matching,
-					vals: state.matching.vals.concat(payload),
+				question: {
+					...state.question,
+					matching: {
+						...state.question.matching,
+						vals: state.question.matching.vals.concat(payload),
+					},
+				},
+			};
+		}
+		case ADD_QUESTION: {
+			return {
+				...state,
+				question: payload,
+			};
+		}
+		case ADD_MATCHING: {
+			return {
+				...state,
+				question: {
+					...state.question.multipleChoice,
+					matching: payload,
+				},
+			};
+		}
+		case ADD_MULTIPLECHOICE: {
+			return {
+				...state,
+				question: {
+					...state.question.matching,
+					multipleChoice: payload,
 				},
 			};
 		}

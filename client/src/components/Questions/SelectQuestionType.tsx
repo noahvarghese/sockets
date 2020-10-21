@@ -5,12 +5,11 @@ import Questions from "../../config/Questions";
 import { isEmpty, setStateFromElementChange } from "../../Util/Functions";
 import CreateQuestion from "./CreateQuestion";
 import "../../assets/css/selectQuestion.css";
-import { time } from "console";
+import { setInfo } from "../../redux/actions";
 
 const SelectQuestion = ({
 	/*addMatching, addMultipleChoice,*/ info,
-	multipleChoice,
-	matching,
+	question,
 	socket,
 	...props
 }) => {
@@ -88,16 +87,27 @@ const SelectQuestion = ({
 				className="default"
 				disabled={!state.enableSubmit}
 				onClick={() => {
-					socket.emit("createQuestion", [
+					const info = {
+						type: state.questionType,
+						score: state.score,
+						time: state.time,
+					};
+
+					setInfo(info);
+
+					const data = [
 						{
 							question: {
-								time: state.time,
-								score: state.score,
-								matching: matching,
-								multipleChoice: multipleChoice,
+								info: info,
+								matching: question.matching,
+								multipleChoice: question.multipleChoice,
 							},
 						},
-					]);
+					];
+
+					console.log(data);
+
+					socket.emit("createQuestion", data);
 				}}
 			>
 				Send to Students
@@ -108,5 +118,11 @@ const SelectQuestion = ({
 
 export default connect(
 	(state) => state,
-	(dispatch) => bindActionCreators({}, dispatch)
+	(dispatch) =>
+		bindActionCreators(
+			{
+				setInfo: setInfo,
+			},
+			dispatch
+		)
 )(SelectQuestion);

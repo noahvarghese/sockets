@@ -3,10 +3,13 @@ interface info {
 	role: String;
 	server: String;
 }
-interface question {
-	type: String;
+interface quizInfo {
 	time: Number;
 	score: Number;
+	type: String;
+}
+interface question {
+	info: quizInfo;
 	matching: matching;
 	multipleChoice: mc;
 }

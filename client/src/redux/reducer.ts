@@ -9,6 +9,7 @@ import {
 	ADD_QUESTION,
 	ADD_MATCHING,
 	ADD_MULTIPLECHOICE,
+	SET_INFO,
 } from "./actionTypes";
 
 import state from "../components/StateProps";
@@ -20,9 +21,11 @@ const initialState: state = {
 		server: "",
 	},
 	question: {
-		type: "",
-		time: 0,
-		score: 0,
+		info: {
+			type: "",
+			time: 0,
+			score: 0,
+		},
 		multipleChoice: {
 			question: "",
 			answers: [],
@@ -76,37 +79,74 @@ const reducer = (state: state = initialState, { type, payload }) => {
 			};
 		}
 		case ADD_MULTIPLECHOICE_ANSWER: {
+			const existingAnswers = state.question.multipleChoice.answers;
+			let newAnswers;
+
+			if (payload.index !== null) {
+				newAnswers = [
+					...existingAnswers.slice(0, payload.index - 1),
+					payload.answer,
+					...existingAnswers.slice(payload.index + 1),
+				];
+			} else {
+				newAnswers = existingAnswers.concat(payload.answer);
+			}
 			return {
 				...state,
 				question: {
 					...state.question,
 					multipleChoice: {
 						...state.question.multipleChoice,
-						answers: state.question.multipleChoice.answers.concat(payload),
+						answers: newAnswers,
 					},
 				},
 			};
 		}
 		case ADD_MATCHING_PROPERTY: {
+			const existingProperties = state.question.matching.properties;
+			let newProperties;
+
+			if (payload.index !== null) {
+				newProperties = [
+					...existingProperties.slice(0, payload.index - 1),
+					payload.property,
+					...existingProperties.slice(payload.index + 1),
+				];
+			} else {
+				newProperties = existingProperties.concat(payload.property);
+			}
+
 			return {
 				...state,
 				question: {
 					...state.question,
 					matching: {
 						...state.question.matching,
-						properties: state.question.matching.properties.concat(payload),
+						properties: newProperties,
 					},
 				},
 			};
 		}
 		case ADD_MATCHING_VALUE: {
+			const existingVals = state.question.matching.vals;
+			let newVals;
+
+			if (payload.index !== null) {
+				newVals = [
+					...existingVals.slice(0, payload.index - 1),
+					payload.val,
+					...existingVals.slice(payload.index + 1),
+				];
+			} else {
+				newVals = existingVals.concat(payload.val);
+			}
 			return {
 				...state,
 				question: {
 					...state.question,
 					matching: {
 						...state.question.matching,
-						vals: state.question.matching.vals.concat(payload),
+						vals: newVals,
 					},
 				},
 			};
@@ -132,6 +172,15 @@ const reducer = (state: state = initialState, { type, payload }) => {
 				question: {
 					...state.question.matching,
 					multipleChoice: payload,
+				},
+			};
+		}
+		case SET_INFO: {
+			return {
+				...state,
+				question: {
+					...state.question,
+					info: payload,
 				},
 			};
 		}

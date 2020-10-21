@@ -77,7 +77,6 @@ export default class RedisAccess {
                     success = true;
                 }
             }
-            console.log(success);
             return success;
         }
     }

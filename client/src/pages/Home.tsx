@@ -2,20 +2,17 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import SelectQuestionType from "../components/Questions/SelectQuestionType";
-import { isEmpty } from "../Util/Functions";
+import { addQuestion } from "../redux/actions";
 // import state from "../components/StateProps";
 
-const Home = ({ info, multipleChoice, matching, socket, ...props }) => {
+const Home = ({ info, question, socket, ...props }) => {
 	const [response, setResponse] = useState<String | Object>("");
-	// socket.on("sendMessage", (data) => {
-	// 	console.log(data);
-	// 	setResponse(data);
-	// });
 
 	useEffect(() => {
 		socket.on("sendQuestion", (data) => {
-			console.log(data[0].message);
-			setResponse({ question: data[0].message });
+			console.log(data[0].question);
+			addQuestion(data[0].question);
+			setResponse({ question: data[0] });
 		});
 	});
 	return (
@@ -25,7 +22,7 @@ const Home = ({ info, multipleChoice, matching, socket, ...props }) => {
 			{info.role === "Teacher" ? <SelectQuestionType socket={socket} /> : null}
 			<span>
 				{response ? (
-					JSON.stringify(response)
+					JSON.stringify(question)
 				) : info.role === "Teacher" ? null : (
 					<h3>Waiting for question...</h3>
 				)}
@@ -36,5 +33,5 @@ const Home = ({ info, multipleChoice, matching, socket, ...props }) => {
 
 export default connect(
 	(state) => state,
-	(_) => bindActionCreators({}, _)
+	(dispatch) => bindActionCreators({ addQuestion: addQuestion }, dispatch)
 )(Home);

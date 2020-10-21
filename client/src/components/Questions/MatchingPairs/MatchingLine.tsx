@@ -2,15 +2,26 @@ import React, { useState } from "react";
 import { setStateFromElementChange } from "../../../Util/Functions";
 import MatchingProps from "./MatchingProps";
 import "../../../assets/css/Matching.css";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { addMatchingProperty, addMatchingValue } from "../../../redux/actions";
 
 const MatchingLine: React.FC<MatchingProps> = ({
-	property,
-	value,
+	addMatchingProperty,
+	addMatchingValue,
+	matching,
+	index,
 	...props
 }) => {
 	const [state, setState] = useState({
-		property: property,
-		value: value,
+		property:
+			matching !== undefined && matching.property !== undefined
+				? matching.property
+				: "",
+		value:
+			matching !== undefined && matching.value !== undefined
+				? matching.value
+				: "",
 	});
 
 	return (
@@ -21,7 +32,10 @@ const MatchingLine: React.FC<MatchingProps> = ({
 				aria-label="Matching Key"
 				placeholder="A"
 				value={state.property as string}
-				onChange={(e) => setStateFromElementChange(e, setState, state)}
+				onChange={(e) => {
+					setStateFromElementChange(e, setState, state);
+					addMatchingProperty!(state.property);
+				}}
 			/>
 			<span>=</span>
 			<input
@@ -30,10 +44,23 @@ const MatchingLine: React.FC<MatchingProps> = ({
 				aria-label="Matching Value"
 				placeholder="B"
 				value={state.value as string}
-				onChange={(e) => setStateFromElementChange(e, setState, state)}
+				onChange={(e) => {
+					setStateFromElementChange(e, setState, state);
+					addMatchingValue!(state.value);
+				}}
 			/>
 		</div>
 	);
 };
 
-export default MatchingLine;
+export default connect(
+	(state) => state.question.matching,
+	(dispatch) =>
+		bindActionCreators(
+			{
+				addMatchingProperty: addMatchingProperty,
+				addMatchingValue: addMatchingValue,
+			},
+			dispatch
+		)
+)(MatchingLine);

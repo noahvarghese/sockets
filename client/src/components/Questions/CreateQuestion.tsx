@@ -11,7 +11,9 @@ interface CreateQuestionProps {
 
 const CreateQuestion: React.FC<CreateQuestionProps> = ({ tag, ...props }) => {
 	const emptyMCAnswerProps: MCAnswerProps = { text: "", correct: false };
-	const emptyMatchingProps: MatchingProps = { property: "", value: "" };
+	const emptyMatchingProps: MatchingProps = {
+		matching: { property: "", value: "" },
+	};
 
 	let emptyAnswerProps: MCAnswerProps | MatchingProps = {};
 	let LineComponenent: any;
@@ -40,7 +42,7 @@ const CreateQuestion: React.FC<CreateQuestionProps> = ({ tag, ...props }) => {
 				<LineComponenent />
 			) : (
 				state.answers.map((answer, index) => (
-					<LineComponenent key={index} {...answer} />
+					<LineComponenent key={index} {...answer} index={index} />
 				))
 			)}
 			<div className="btnContainer">

@@ -88,6 +88,7 @@ const __dirname = dirname(__filename);
         socket.on("createQuestion", async data => {
             const name = await redisAccess.getValue(socket.id);
             const server = await redisAccess.getValue(name);
+            console.log(data);
 
             await redisAccess.createItem(server, JSON.stringify(data));
 

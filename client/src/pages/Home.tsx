@@ -12,7 +12,7 @@ const Home = ({ info, question, socket, ...props }) => {
 		socket.on("sendQuestion", (data) => {
 			console.log(data[0].question);
 			addQuestion(data[0].question);
-			setResponse({ question: data[0] });
+			setResponse(data[0].question);
 		});
 	});
 	return (
@@ -22,7 +22,7 @@ const Home = ({ info, question, socket, ...props }) => {
 			{info.role === "Teacher" ? <SelectQuestionType socket={socket} /> : null}
 			<span>
 				{response ? (
-					JSON.stringify(question)
+					JSON.stringify(response)
 				) : info.role === "Teacher" ? null : (
 					<h3>Waiting for question...</h3>
 				)}

@@ -28,7 +28,12 @@ const initialState: state = {
 		},
 		multipleChoice: {
 			question: "",
-			answers: [],
+			answers: [
+				{
+					answer: "",
+					correct: false,
+				},
+			],
 		},
 		matching: {
 			properties: [],

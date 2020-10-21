@@ -11,6 +11,7 @@ const MatchingLine: React.FC<MatchingProps> = ({
 	addMatchingValue,
 	matching,
 	index,
+	setMatching,
 	...props
 }) => {
 	const [state, setState] = useState({
@@ -35,6 +36,7 @@ const MatchingLine: React.FC<MatchingProps> = ({
 				onChange={(e) => {
 					setStateFromElementChange(e, setState, state);
 					addMatchingProperty!(state.property);
+					setMatching({ property: e.target.value, val: state.value }, index);
 				}}
 			/>
 			<span>=</span>
@@ -47,6 +49,7 @@ const MatchingLine: React.FC<MatchingProps> = ({
 				onChange={(e) => {
 					setStateFromElementChange(e, setState, state);
 					addMatchingValue!(state.value);
+					setMatching({ property: state.property, val: e.target.value }, index);
 				}}
 			/>
 		</div>

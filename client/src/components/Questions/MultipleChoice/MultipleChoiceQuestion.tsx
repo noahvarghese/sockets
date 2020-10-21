@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { setStateFromElementChange } from "../../../Util/Functions";
 
-const MultipleChoiceQuestion = () => {
+const MultipleChoiceQuestion = ({ setQuestion }) => {
 	const [state, setState] = useState({ question: "" });
 	return (
 		<div>
@@ -12,7 +12,12 @@ const MultipleChoiceQuestion = () => {
 				aria-label="Question"
 				rows={5}
 				cols={50}
-				onChange={(e) => setStateFromElementChange(e, setState, state)}
+				onChange={(e) => {
+					setState({
+						question: e.target.value,
+					});
+					setQuestion(e.target.value);
+				}}
 			></textarea>
 		</div>
 	);

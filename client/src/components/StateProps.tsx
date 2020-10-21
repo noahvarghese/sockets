@@ -4,8 +4,8 @@ interface info {
 	server: String;
 }
 interface quizInfo {
-	time: Number;
-	score: Number;
+	time?: Number;
+	score?: Number;
 	type: String;
 }
 interface question {
@@ -16,7 +16,12 @@ interface question {
 
 interface mc {
 	question: String;
-	answers: String[];
+	answers: [
+		{
+			answer: string;
+			correct?: Boolean;
+		}
+	];
 }
 
 interface matching {

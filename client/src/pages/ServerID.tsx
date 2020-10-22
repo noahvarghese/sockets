@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { setServer } from "../redux/actions";
+import state from "../components/StateProps";
 // import { socket } from "../config/Socket";
 
 const ServerID = ({ role, setServer, name, socket, ...props }) => {
@@ -71,7 +72,7 @@ const ServerID = ({ role, setServer, name, socket, ...props }) => {
 };
 
 export default connect(
-	(state) => state.info,
+	(state: state) => state.info,
 	(dispatch) =>
 		bindActionCreators(
 			{

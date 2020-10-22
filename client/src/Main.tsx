@@ -6,6 +6,7 @@ import Role from "./pages/Role";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./assets/css/root.css";
 import { socket } from "./config/Socket";
+import state from "./components/StateProps";
 
 const Main = ({ role, name, server, ...props }) => {
 	return (
@@ -32,6 +33,6 @@ const Main = ({ role, name, server, ...props }) => {
 };
 
 export default connect(
-	(state) => state.info,
+	(state: state) => state.info,
 	(dispatch) => bindActionCreators({}, dispatch)
 )(Main);

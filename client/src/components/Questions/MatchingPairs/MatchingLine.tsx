@@ -5,6 +5,7 @@ import "../../../assets/css/Matching.css";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { addMatchingProperty, addMatchingValue } from "../../../redux/actions";
+import state from "../../StateProps";
 
 const MatchingLine: React.FC<MatchingProps> = ({
 	addMatchingProperty,
@@ -69,7 +70,7 @@ const MatchingLine: React.FC<MatchingProps> = ({
 };
 
 export default connect(
-	(state) => state.question.matching,
+	(state: state) => state.question.matching,
 	(dispatch) =>
 		bindActionCreators(
 			{

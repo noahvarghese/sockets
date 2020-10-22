@@ -3,6 +3,7 @@ import { Redirect, Route } from "react-router-dom";
 import Routes from "../config/Routes";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import state from "./StateProps";
 
 interface ProtectedRouteProps {
 	tag: String;
@@ -37,6 +38,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = (props) => {
 };
 
 export default connect(
-	(state) => state.info,
+	(state: state) => state.info,
 	(dispatch) => bindActionCreators({}, dispatch)
 )(ProtectedRoute);

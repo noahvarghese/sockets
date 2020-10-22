@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { addMatchingProperty, addMatchingValue } from "../../redux/actions";
-import MatchingLine from "./MatchingPairs/MatchingLine";
 import MultipleChoiceAnswer from "./MultipleChoice/MultipleChoiceAnswer";
 import MultipleChoiceQuestion from "./MultipleChoice/MultipleChoiceQuestion";
 import { initialQuestion } from "../StateProps";

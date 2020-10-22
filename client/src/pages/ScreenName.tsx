@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { setName } from "../redux/actions";
-// import { socket } from "../config/Socket";
+import state from "../components/StateProps";
 
 const ScreenName = ({ role, setName, socket, ...props }) => {
 	const path = "/serverID";
@@ -68,7 +68,7 @@ const ScreenName = ({ role, setName, socket, ...props }) => {
 };
 
 export default connect(
-	(state) => {
+	(state: state) => {
 		return { role: state.info.role };
 	},
 	(dispatch) =>

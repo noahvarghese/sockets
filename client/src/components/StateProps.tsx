@@ -34,6 +34,7 @@ export interface matching {
 export interface state {
 	info: info;
 	question: question;
+	timeLeft: Number;
 }
 
 export const initialQuestion: question = {

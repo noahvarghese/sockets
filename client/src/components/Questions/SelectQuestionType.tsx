@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import Questions from "../../config/Questions";
@@ -42,20 +42,18 @@ const SelectQuestion = ({
 		});
 	};
 
-	const createNewQuestion = () => {
-		setState({
-			info: { ...state.info },
-			matching: {
-				properties: [""],
-				vals: [""],
-			},
-			multipleChoice: {
-				question: "",
-				answers: [{ answer: "", correct: false }],
-			},
-			enableSubmit: false,
-			submitted: false,
-		});
+	const initialState = {
+		info: { ...state.info },
+		matching: {
+			properties: [""],
+			vals: [""],
+		},
+		multipleChoice: {
+			question: "",
+			answers: [{ answer: "", correct: false }],
+		},
+		enableSubmit: false,
+		submitted: false,
 	};
 
 	const setQuestion = (question) => {
@@ -149,233 +147,228 @@ const SelectQuestion = ({
 		});
 	}
 
+	if (state.submitted) {
+		return (
+			<ViewResults
+				socket={socket}
+				createNewQuestion={setState}
+				blankQuestion={initialState}
+			/>
+		);
+	}
+
 	return (
 		<>
-			{state.submitted === false ? (
-				<>
-					<h2>Post a question to students</h2>
-					<div className="selectQuestion">
-						<select
-							name="questionType"
-							onChange={(e) => {
+			<h2>Post a question to students</h2>
+			<div className="selectQuestion">
+				<select
+					name="questionType"
+					onChange={(e) => {
+						setState({
+							info: {
+								...state.info,
+								type: e.target.value,
+							},
+							multipleChoice: {
+								question: "",
+								answers: [{ correct: false, answer: "" }],
+							},
+							matching: {
+								properties: [""],
+								vals: [""],
+							},
+							enableSubmit: false,
+							submitted: false,
+						});
+					}}
+					value={state.info.type}
+				>
+					<option>Select a question type</option>
+					{Questions.map((question) => {
+						return (
+							<option value={question.type} key={question.type}>
+								{question.type}
+							</option>
+						);
+					})}
+				</select>
+				<input
+					type="number"
+					name="score"
+					placeholder="Score"
+					aria-label="Score"
+					onChange={(e) =>
+						setState({
+							...state,
+							info: {
+								...state.info,
+								score: e.target.value,
+							},
+						})
+					}
+					value={Number(state.info.score) ? (state.info.score! as string) : ""}
+				/>
+				<input
+					type="number"
+					name="time"
+					placeholder="Time (s)"
+					aria-label="Time"
+					value={Number(state.info.time) ? (state.info.time! as string) : ""}
+					onChange={(e) =>
+						setState({
+							...state,
+							info: {
+								...state.info,
+								time: e.target.value,
+							},
+						})
+					}
+				/>
+			</div>
+			<>
+				{state.info.type === "Multiple Choice" ? (
+					<>
+						<MultipleChoiceQuestion setQuestion={setQuestion} question="" />
+						<h3>Answers</h3>
+					</>
+				) : null}
+				{state.info.type !== "Select a question type" ? (
+					length === 0 ? (
+						<LineComponenent />
+					) : state.info.type === "Multiple Choice" ? (
+						state.multipleChoice.answers.map((answer, index) => (
+							<LineComponenent
+								key={index}
+								{...answer}
+								index={index}
+								setMultipleChoice={setMultipleChoice}
+							/>
+						))
+					) : (
+						state.matching.properties.map((property, index) => (
+							<LineComponenent
+								key={index}
+								property={property}
+								val={state.matching.vals[index]}
+								index={index}
+								setMatching={setMatching}
+							/>
+						))
+					)
+				) : null}
+				<div className="btnContainer">
+					{state.info.type !== "Select a question type" ? (
+						<button
+							className="default"
+							onClick={() => {
+								let newState = {};
+								if (state.info.type === "Matching Pairs") {
+									if (secondaryKey === "") {
+										secondaryKey = "properties";
+									}
+									newState = {
+										properties: (state.matching.properties as String[]).concat([
+											"",
+										]),
+										vals: (state.matching.vals as String[]).concat([""]),
+									};
+								} else if (state.info.type === "Multiple Choice") {
+									if (secondaryKey === "") {
+										secondaryKey = "answers";
+									}
+									newState = {
+										question: state.multipleChoice.question,
+										answers: (state.multipleChoice.answers as Object[]).concat([
+											{
+												correct: false,
+												answer: "",
+											},
+										]),
+									};
+								}
 								setState({
-									info: {
-										...state.info,
-										type: e.target.value,
-									},
-									multipleChoice: {
-										question: "",
-										answers: [{ correct: false, answer: "" }],
-									},
-									matching: {
-										properties: [""],
-										vals: [""],
-									},
-									enableSubmit: false,
-									submitted: false,
+									...state,
+									// Don't use push as the state is immutable
+									// concat combines the array calling it and the array passed into the method
+									[key]: newState,
 								});
 							}}
-							value={state.info.type}
 						>
-							<option>Select a question type</option>
-							{Questions.map((question) => {
-								return (
-									<option value={question.type} key={question.type}>
-										{question.type}
-									</option>
-								);
-							})}
-						</select>
-						<input
-							type="number"
-							name="score"
-							placeholder="Score"
-							aria-label="Score"
-							onChange={(e) =>
+							Add
+						</button>
+					) : null}
+					{secondaryKey && state[key][secondaryKey].length > 1 ? (
+						<button
+							className="secondary"
+							onClick={() => {
+								let newState: any;
+								if (state.info.type === "Matching Pairs") {
+									newState = {
+										properties: [],
+										vals: [],
+									};
+
+									for (
+										let i = 0;
+										i < state.matching.properties.length - 1;
+										i++
+									) {
+										newState.properties = (newState.properties as String[]).concat(
+											[state.matching.properties[i]]
+										);
+										newState.vals = (newState.vals as String[]).concat([
+											state.matching.vals[i],
+										]);
+									}
+								} else if (state.info.type === "Multiple Choice") {
+									newState = {
+										question: state.multipleChoice.question,
+										answers: [],
+									};
+									for (
+										let i = 0;
+										i < state.multipleChoice.answers.length - 1;
+										i++
+									) {
+										newState.answers = (newState.answers as Object[]).concat([
+											state.multipleChoice.answers[i],
+										]);
+									}
+								}
+
 								setState({
 									...state,
-									info: {
-										...state.info,
-										score: e.target.value,
-									},
-								})
-							}
-							value={
-								Number(state.info.score) ? (state.info.score! as string) : ""
-							}
-						/>
-						<input
-							type="number"
-							name="time"
-							placeholder="Time (s)"
-							aria-label="Time"
-							value={
-								Number(state.info.time) ? (state.info.time! as string) : ""
-							}
-							onChange={(e) =>
-								setState({
-									...state,
-									info: {
-										...state.info,
-										time: e.target.value,
-									},
-								})
-							}
-						/>
-					</div>
-					<>
-						{state.info.type === "Multiple Choice" ? (
-							<>
-								<MultipleChoiceQuestion setQuestion={setQuestion} question="" />
-								<h3>Answers</h3>
-							</>
-						) : null}
-						{state.info.type !== "Select a question type" ? (
-							length === 0 ? (
-								<LineComponenent />
-							) : state.info.type === "Multiple Choice" ? (
-								state.multipleChoice.answers.map((answer, index) => (
-									<LineComponenent
-										key={index}
-										{...answer}
-										index={index}
-										setMultipleChoice={setMultipleChoice}
-									/>
-								))
-							) : (
-								state.matching.properties.map((property, index) => (
-									<LineComponenent
-										key={index}
-										property={property}
-										val={state.matching.vals[index]}
-										index={index}
-										setMatching={setMatching}
-									/>
-								))
-							)
-						) : null}
-						<div className="btnContainer">
-							{state.info.type !== "Select a question type" ? (
-								<button
-									className="default"
-									onClick={() => {
-										let newState = {};
-										if (state.info.type === "Matching Pairs") {
-											if (secondaryKey === "") {
-												secondaryKey = "properties";
-											}
-											newState = {
-												properties: (state.matching
-													.properties as String[]).concat([""]),
-												vals: (state.matching.vals as String[]).concat([""]),
-											};
-										} else if (state.info.type === "Multiple Choice") {
-											if (secondaryKey === "") {
-												secondaryKey = "answers";
-											}
-											newState = {
-												question: state.multipleChoice.question,
-												answers: (state.multipleChoice
-													.answers as Object[]).concat([
-													{
-														correct: false,
-														answer: "",
-													},
-												]),
-											};
-										}
-										setState({
-											...state,
-											// Don't use push as the state is immutable
-											// concat combines the array calling it and the array passed into the method
-											[key]: newState,
-										});
-									}}
-								>
-									Add
-								</button>
-							) : null}
-							{secondaryKey && state[key][secondaryKey].length > 1 ? (
-								<button
-									className="secondary"
-									onClick={() => {
-										let newState: any;
-										if (state.info.type === "Matching Pairs") {
-											newState = {
-												properties: [],
-												vals: [],
-											};
+									[key]: newState,
+								});
+							}}
+						>
+							Delete
+						</button>
+					) : null}
+				</div>
+			</>
 
-											for (
-												let i = 0;
-												i < state.matching.properties.length - 1;
-												i++
-											) {
-												newState.properties = (newState.properties as String[]).concat(
-													[state.matching.properties[i]]
-												);
-												newState.vals = (newState.vals as String[]).concat([
-													state.matching.vals[i],
-												]);
-											}
-										} else if (state.info.type === "Multiple Choice") {
-											newState = {
-												question: state.multipleChoice.question,
-												answers: [],
-											};
-											for (
-												let i = 0;
-												i < state.multipleChoice.answers.length - 1;
-												i++
-											) {
-												newState.answers = (newState.answers as Object[]).concat(
-													[state.multipleChoice.answers[i]]
-												);
-											}
-										}
+			<button
+				className="default"
+				disabled={!state.enableSubmit}
+				onClick={() => {
+					const data = [
+						{
+							info: state.info,
+							matching: state.matching,
+							multipleChoice: state.multipleChoice,
+						},
+					];
 
-										setState({
-											...state,
-											[key]: newState,
-										});
-									}}
-								>
-									Delete
-								</button>
-							) : null}
-						</div>
-					</>
-
-					<button
-						className="default"
-						disabled={!state.enableSubmit}
-						onClick={() => {
-							const info = {
-								type: state.info.type,
-								score: state.info.score,
-								time: state.info.time,
-							};
-
-							setInfo(info);
-
-							const data = [
-								{
-									info: state.info,
-									matching: state.matching,
-									multipleChoice: state.multipleChoice,
-								},
-							];
-
-							socket.emit("createQuestion", data);
-							setSubmitted();
-						}}
-					>
-						Send to Students
-					</button>
-				</>
-			) : (
-				<ViewResults socket={socket} createNewQuestion={createNewQuestion} />
-			)}
+					socket.emit("createQuestion", data);
+					setState({
+						...state,
+						submitted: !state.submitted,
+					});
+				}}
+			>
+				Send to Students
+			</button>
 		</>
 	);
 };

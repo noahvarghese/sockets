@@ -10,6 +10,7 @@ import {
 	ADD_MATCHING,
 	ADD_MULTIPLECHOICE,
 	SET_INFO,
+	UPDATE_TIME_LEFT,
 } from "./actionTypes";
 
 import state from "../components/StateProps";
@@ -40,6 +41,7 @@ const initialState: state = {
 			vals: [],
 		},
 	},
+	timeLeft: 0,
 };
 
 const reducer = (state: state = initialState, { type, payload }) => {
@@ -187,6 +189,12 @@ const reducer = (state: state = initialState, { type, payload }) => {
 					...state.question,
 					info: payload,
 				},
+			};
+		}
+		case UPDATE_TIME_LEFT: {
+			return {
+				...state,
+				timeLeft: payload,
 			};
 		}
 		default:

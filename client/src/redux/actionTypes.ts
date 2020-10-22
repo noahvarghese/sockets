@@ -9,3 +9,4 @@ export const ADD_QUESTION = "ADD_QUESTION";
 export const ADD_MULTIPLECHOICE = "ADD_MULTIPLECHOICE";
 export const ADD_MATCHING = "ADD_MATCHING";
 export const SET_INFO = "SET_INFO";
+export const UPDATE_TIME_LEFT = "UPDATE_TIME_LEFT";

@@ -10,6 +10,7 @@ import {
 	ADD_QUESTION,
 	ADD_MATCHING,
 	ADD_MULTIPLECHOICE,
+	UPDATE_TIME_LEFT,
 } from "./actionTypes";
 
 export const setRole = (role) => ({
@@ -65,4 +66,9 @@ export const addMatching = (matching) => ({
 export const addMultipleChoice = (mc) => ({
 	type: ADD_MULTIPLECHOICE,
 	payload: mc,
+});
+
+export const updateTimeLeft = (time) => ({
+	type: UPDATE_TIME_LEFT,
+	payload: time,
 });

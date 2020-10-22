@@ -1,24 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import TimeLeft from "./TimeLeft";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import state from "./StateProps";
 
-const ViewResults = ({ socket, createNewQuestion }) => {
-	const [state, setState] = useState({
-		timeLeft: 0,
-	});
+interface ResultProps {
+	socket: any;
+	createNewQuestion: Function;
+	blankQuestion: Object;
+	timeLeft?: number;
+}
 
-	// useEffect(() => {
-	// 	socket.on("timeLeft", (timeLeft) => {
-	// 		setState({ timeLeft: timeLeft });
-	// 	});
-	// }, []);
+const ViewResults: React.FC<ResultProps> = ({
+	socket,
+	createNewQuestion,
+	blankQuestion,
+	timeLeft,
+}) => {
 	return (
 		<div>
-			{/* <TimeLeft  /> */}
-			{state.timeLeft === 0 ? (
-				<button onClick={createNewQuestion()}>Next Question</button>
-			) : null}
+			<TimeLeft socket={socket} />
+			<button
+				onClick={() => createNewQuestion(blankQuestion)}
+				disabled={timeLeft === 0}
+			>
+				Next Question
+			</button>
 		</div>
 	);
 };
 
-export default ViewResults;
+export default connect(
+	(state: state) => state.timeLeft,
+	(_) => bindActionCreators({}, _)
+)(ViewResults);

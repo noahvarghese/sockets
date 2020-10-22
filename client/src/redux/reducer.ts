@@ -41,7 +41,7 @@ const initialState: state = {
 			vals: [],
 		},
 	},
-	timeLeft: 0,
+	timeLeft: -1,
 };
 
 const reducer = (state: state = initialState, { type, payload }) => {

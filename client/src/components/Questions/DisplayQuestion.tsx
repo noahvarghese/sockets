@@ -63,15 +63,6 @@ const DisplayQuestion = ({ socket, ...props }) => {
 							))}
 						</select>
 					</div>
-					// <MatchingLine
-					// 	matching={{
-					// 		property: property,
-					// 		value: state.matching.vals[index],
-					// 	}}
-					// 	index={index}
-					// 	readOnly={true}
-					// 	key={index}
-					// />
 				))
 			) : (
 				// <h1>Hi</h1>

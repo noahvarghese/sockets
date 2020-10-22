@@ -7,14 +7,14 @@ import state from "./StateProps";
 
 interface TimeProps {
 	socket: any;
-	timeLeft?: number | undefined;
+	timeLeft?: Object | undefined;
 	updateTimeLeft?: Function;
 }
 
 const TimeLeft: React.FC<TimeProps> = ({
 	socket,
-	timeLeft,
 	updateTimeLeft,
+	...timeLeft
 }) => {
 	// const [time, setTime] = useState(0);
 	useEffect(() => {
@@ -22,16 +22,22 @@ const TimeLeft: React.FC<TimeProps> = ({
 			console.log(time);
 			// for some reason it is comparing it to the original state???
 			// had to include special case for 0
-			if (time !== timeLeft || time === 0) {
+			if (time !== timeLeft.timeLeft || time === 0) {
 				updateTimeLeft!(time);
 			}
 		});
 	});
-	return <div className="timeLeft">{timeLeft}</div>;
+	return (
+		<div className="timeLeft">
+			{timeLeft.timeLeft! > -1 ? timeLeft.timeLeft : null}
+		</div>
+	);
 };
 
 export default connect(
-	(state: state) => state.timeLeft,
+	(state: state) => {
+		return { timeLeft: state.timeLeft };
+	},
 	(dispatch) =>
 		bindActionCreators(
 			{

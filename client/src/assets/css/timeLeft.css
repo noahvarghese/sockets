@@ -1,0 +1,20 @@
+:root {
+	--main-bg-color: #252c4a;
+	--main-fg-color: #909ac3;
+	--primary-btn-color: 16, 126, 235;
+	--secondary-btn-color: 237, 70, 45;
+	--primary-border-color: #21486a;
+}
+
+.timeLeft {
+	font-size: 2rem;
+	border: 5px solid var(--primary-border-color);
+	padding: 1rem;
+	color: var(--main-fg-color);
+	border-radius: 5px;
+	background-color: rgba(0, 0, 0, 0.2);
+	position: relative;
+	top: 0.5rem;
+	right: -15rem;
+	margin: 1rem;
+}

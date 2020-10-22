@@ -114,7 +114,15 @@ const __dirname = dirname(__filename);
             }
 
             socket.to(server).emit("sendQuestion", studentData);
-            // io.to(server).emit("sendMessage", message);
+            let time = studentData.info.time;
+            let interval = setInterval(() => {
+                // braodcast time remaingin to everyone in room
+                io.in(server).emit("timeLeft", time);
+                if (time === 0) {
+                    clearInterval(interval);
+                }
+                time -= 1;
+            }, 1000);
         });
 
         socket.on("disconnect", async () => {
@@ -122,13 +130,11 @@ const __dirname = dirname(__filename);
             // get values to delete
             const name = await redisAccess.getValue(socket.id);
             const server = await redisAccess.getValue(name);
-            console.log("NAme: ", name)
 
             if (!isEmpty(name) && !isEmpty(server)) {
                 // console.log(`Disconnect ${socket.id}: ${name}, ${server}`)
 
                 const headCount = io.sockets.adapter.rooms.length;
-                console.log(headCount);
                 if (headCount > 1) {
                     // emit event to everyone in room
                     // frontend to direct suer back to serverID so that teacher can reconnect

@@ -6,26 +6,16 @@ import MatchingLine from "./MatchingPairs/MatchingLine";
 import MultipleChoiceAnswer from "./MultipleChoice/MultipleChoiceAnswer";
 import MultipleChoiceQuestion from "./MultipleChoice/MultipleChoiceQuestion";
 import { initialQuestion } from "../StateProps";
+import TimeLeft from "../TimeLeft";
 
 const DisplayQuestion = ({ socket, ...props }) => {
-	const [state, setState] = useState(initialQuestion);
+	const [state, setState] = useState({ ...initialQuestion });
 	useEffect(() => {
 		socket.on("sendQuestion", (data) => {
 			// remove all
 			setState(data);
 		});
-	});
-	console.log(state.matching);
-
-	// const setQuestion = (question) => {
-	// 	setState({
-	// 		...state,
-	// 		multipleChoice: {
-	// 			question: question,
-	// 			answers: state.multipleChoice.answers,
-	// 		},
-	// 	});
-	// };
+	}, []);
 
 	const setMultipleChoice = (mc, index) => {
 		let tempAnswer = state.multipleChoice.answers;
@@ -39,20 +29,9 @@ const DisplayQuestion = ({ socket, ...props }) => {
 		});
 	};
 
-	const MatchingLines = state.matching.properties.forEach((property, index) => {
-		console.log(property, index);
-		return (
-			<MatchingLine
-				matching={{ property: property, value: state.matching.vals[index] }}
-				index={index}
-				readOnly={true}
-				key={index}
-			/>
-		);
-	});
-	console.log(MatchingLines);
 	return (
 		<>
+			{state.info.type !== "" ? <TimeLeft socket={socket} /> : null}
 			{state.info.type === "Multiple Choice" ? (
 				<>
 					<MultipleChoiceQuestion
@@ -71,19 +50,33 @@ const DisplayQuestion = ({ socket, ...props }) => {
 				</>
 			) : state.info.type === "Matching Pairs" ? (
 				state.matching.properties.map((property, index) => (
-					<MatchingLine
-						matching={{
-							property: property,
-							value: state.matching.vals[index],
-						}}
-						index={index}
-						readOnly={true}
-						key={index}
-					/>
+					<div>
+						<input
+							type="text"
+							value={property as string}
+							key={index}
+							readOnly={true}
+						/>
+						<select>
+							<option></option>
+							{state.matching.vals.map((val, index) => (
+								<option key={index}>{val}</option>
+							))}
+						</select>
+					</div>
+					// <MatchingLine
+					// 	matching={{
+					// 		property: property,
+					// 		value: state.matching.vals[index],
+					// 	}}
+					// 	index={index}
+					// 	readOnly={true}
+					// 	key={index}
+					// />
 				))
 			) : (
 				// <h1>Hi</h1>
-				<h1>Waiting for question...</h1>
+				<h3>Waiting for question...</h3>
 			)}
 		</>
 	);

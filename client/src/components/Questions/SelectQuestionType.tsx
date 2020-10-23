@@ -31,11 +31,9 @@ const checkDataFilled = (question: question, submitted): boolean => {
 		});
 	} else if (question.info.type === "Matching Pairs") {
 		if (question.matching.properties.length <= 1) {
-			console.log("Length to short");
 			empty = true;
 		}
 		if (question.matching.properties.length !== question.matching.vals.length) {
-			console.log("Length not equal");
 			empty = true;
 		}
 		question.matching.properties.forEach((property, index) => {
@@ -43,12 +41,6 @@ const checkDataFilled = (question: question, submitted): boolean => {
 				property.trim() === "" ||
 				question.matching.vals[index].trim() === ""
 			) {
-				console.log(
-					"Prop: ",
-					property,
-					" val: ",
-					question.matching.vals[index]
-				);
 				empty = true;
 			}
 		});

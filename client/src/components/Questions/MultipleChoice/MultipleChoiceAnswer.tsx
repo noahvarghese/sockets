@@ -1,56 +1,59 @@
-import React, { useState } from "react";
+import React from "react";
+import { connect } from "react-redux";
+import {
+	setMultipleChoiceAnswerCorrect,
+	setMultipleChoiceAnswerText,
+} from "../../../redux/actions";
+import state, { mcAnswer } from "../../InterfaceDefaults/StateProps";
 
 interface MCAnswerProps {
-	text?: String;
-	correct?: Boolean;
+	answers?: mcAnswer[];
 	index: Number;
-	setMultipleChoice: Function;
+	setAnswerText: Function;
+	setAnswerCorrect: Function;
 }
 
 const MultipleChoiceAnswer: React.FC<MCAnswerProps> = ({
-	correct,
-	text,
+	answers,
 	index,
-	setMultipleChoice,
+	setAnswerText,
+	setAnswerCorrect,
 	...props
 }) => {
-	const [state, setState] = useState({
-		correct: correct || false,
-		text: text || "",
-	});
-
+	const answer = answers![index as number];
 	return (
 		<div>
 			<input
 				type="checkbox"
 				name="correct"
 				aria-label="Correct"
-				checked={state.correct as boolean}
-				onChange={() => {
-					setState({ ...state, correct: !state.correct });
-					setMultipleChoice(
-						{ correct: !state.correct, answer: state.text },
-						index
-					);
+				checked={answer.correct as boolean}
+				onChange={(e) => {
+					setAnswerCorrect(e.target.checked, index);
 				}}
 			/>
-			<span className="checkmark"></span>
 			<input
 				type="text"
 				name="answer"
 				aria-label="Answer"
 				placeholder="Answer"
-				value={state.text as string}
+				value={answer.text as string}
 				onChange={(e) => {
-					setState({ ...state, text: e.target.value.trim() });
-					setMultipleChoice(
-						{ correct: state.correct, answer: e.target.value },
-						index
-					);
+					setAnswerText(e.target.value, index);
 				}}
 			/>
 		</div>
 	);
 };
 
-export default MultipleChoiceAnswer;
+export default connect(
+	(state: state) => ({ answers: state.question.multipleChoice.answers }),
+	(dispatch) => {
+		return {
+			setAnswerText: (text: string, index: number) =>
+				dispatch(setMultipleChoiceAnswerText(text, index)),
+			setAnswerCorrect: (correct: boolean, index: number) =>
+				dispatch(setMultipleChoiceAnswerCorrect(correct, index)),
+		};
+	}
+)(MultipleChoiceAnswer);

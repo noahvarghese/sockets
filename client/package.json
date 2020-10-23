@@ -43,6 +43,7 @@
 	"devDependencies": {
 		"@types/react-redux": "^7.1.9",
 		"@types/socket.io-client": "^1.4.34",
-		"dotenv": "^8.2.0"
+		"dotenv": "^8.2.0",
+		"redux-devtools-extension": "^2.13.8"
 	}
 }

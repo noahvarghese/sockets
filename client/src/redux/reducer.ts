@@ -1,52 +1,30 @@
 import {
-	ADD_NAME,
-	ADD_SERVER,
-	ADD_ROLE,
-	ADD_MATCHING_PROPERTY,
-	ADD_MATCHING_VALUE,
-	ADD_MULTIPLECHOICE_QUESTION,
-	ADD_MULTIPLECHOICE_ANSWER,
-	ADD_QUESTION,
-	ADD_MATCHING,
-	ADD_MULTIPLECHOICE,
-	SET_INFO,
-	UPDATE_TIME_LEFT,
+	SET_NAME,
+	SET_SERVER,
+	SET_ROLE,
+	SET_MATCHING_PROPERTY,
+	SET_MATCHING_VALUE,
+	SET_MULTIPLECHOICE_QUESTION,
+	SET_MULTIPLECHOICE_ANSWER_TEXT,
+	SET_MULTIPLECHOICE_ANSWER_CORRECT,
+	SET_MATCHING,
+	SET_MULTIPLECHOICE,
+	SET_QUESTION_INFO,
+	SET_TIME_LEFT,
+	SET_QUESTION_TYPE,
+	SET_QUESTION_TIME,
+	SET_QUESTION_SCORE,
+	RESET_QUESTION,
+	SET_MULTIPLECHOICE_ANSWER,
+	SET_QUESTION_SUBMITTED,
 } from "./actionTypes";
 
-import state from "../components/StateProps";
-
-const initialState: state = {
-	info: {
-		name: "",
-		role: "",
-		server: "",
-	},
-	question: {
-		info: {
-			type: "",
-			time: 0,
-			score: 0,
-		},
-		multipleChoice: {
-			question: "",
-			answers: [
-				{
-					answer: "",
-					correct: false,
-				},
-			],
-		},
-		matching: {
-			properties: [],
-			vals: [],
-		},
-	},
-	timeLeft: -1,
-};
+import state, { mcAnswer } from "../components/InterfaceDefaults/StateProps";
+import { initialState } from "../components/InterfaceDefaults/InitialState";
 
 const reducer = (state: state = initialState, { type, payload }) => {
 	switch (type) {
-		case ADD_NAME: {
+		case SET_NAME: {
 			return {
 				...state,
 				info: {
@@ -55,7 +33,7 @@ const reducer = (state: state = initialState, { type, payload }) => {
 				},
 			};
 		}
-		case ADD_SERVER: {
+		case SET_SERVER: {
 			return {
 				...state,
 				info: {
@@ -64,7 +42,7 @@ const reducer = (state: state = initialState, { type, payload }) => {
 				},
 			};
 		}
-		case ADD_ROLE: {
+		case SET_ROLE: {
 			return {
 				...state,
 				info: {
@@ -73,31 +51,112 @@ const reducer = (state: state = initialState, { type, payload }) => {
 				},
 			};
 		}
-		case ADD_MULTIPLECHOICE_QUESTION: {
+		case RESET_QUESTION: {
+			return {
+				...state,
+				question: payload,
+			};
+		}
+		case SET_QUESTION_INFO: {
+			return {
+				...state,
+				question: {
+					...state.question,
+					info: payload,
+				},
+			};
+		}
+		case SET_QUESTION_TYPE: {
+			return {
+				...state,
+				question: {
+					...state.question,
+					info: {
+						...state.question.info,
+						type: payload,
+					},
+					multipleChoice: initialState.question.multipleChoice,
+					matching: initialState.question.matching,
+				},
+			};
+		}
+		case SET_QUESTION_TIME: {
+			return {
+				...state,
+				question: {
+					...state.question,
+					info: {
+						...state.question.info,
+						time: payload,
+					},
+				},
+			};
+		}
+		case SET_QUESTION_SCORE: {
+			return {
+				...state,
+				question: {
+					...state.question,
+					info: {
+						...state.question.info,
+						score: payload,
+					},
+				},
+			};
+		}
+		case SET_MULTIPLECHOICE: {
+			return {
+				...state,
+				question: {
+					...state.question.matching,
+					multipleChoice: payload,
+				},
+			};
+		}
+		case SET_MULTIPLECHOICE_QUESTION: {
+			return {
+				...state,
+				question: {
+					...state.question,
+					multipleChoice: {
+						question: payload,
+						answers: state.question.multipleChoice.answers,
+					},
+					matching: state.question.matching,
+				},
+			};
+		}
+		case SET_MULTIPLECHOICE_ANSWER: {
 			return {
 				...state,
 				question: {
 					...state.question,
 					multipleChoice: {
 						...state.question.multipleChoice,
-						question: payload,
+						answers: payload,
 					},
 				},
 			};
 		}
-		case ADD_MULTIPLECHOICE_ANSWER: {
+		case SET_MULTIPLECHOICE_ANSWER_TEXT: {
 			const existingAnswers = state.question.multipleChoice.answers;
-			let newAnswers;
+			let newAnswers: mcAnswer[] = [];
 
-			if (payload.index !== null) {
-				newAnswers = [
-					...existingAnswers.slice(0, payload.index - 1),
-					payload.answer,
-					...existingAnswers.slice(payload.index + 1),
-				];
-			} else {
-				newAnswers = existingAnswers.concat(payload.answer);
+			for (let i = 0; i < existingAnswers.length; i++) {
+				let el;
+
+				if (i !== payload.index) {
+					el = existingAnswers[i];
+				} else {
+					el = {
+						text: payload.text,
+						correct: existingAnswers[payload.index].correct,
+					};
+				}
+
+				newAnswers.push(el);
 			}
+
 			return {
 				...state,
 				question: {
@@ -109,18 +168,58 @@ const reducer = (state: state = initialState, { type, payload }) => {
 				},
 			};
 		}
-		case ADD_MATCHING_PROPERTY: {
-			const existingProperties = state.question.matching.properties;
-			let newProperties;
+		case SET_MULTIPLECHOICE_ANSWER_CORRECT: {
+			const existingAnswers = state.question.multipleChoice.answers;
+			let newAnswers: mcAnswer[] = [];
 
-			if (payload.index !== null) {
-				newProperties = [
-					...existingProperties.slice(0, payload.index - 1),
-					payload.property,
-					...existingProperties.slice(payload.index + 1),
-				];
-			} else {
-				newProperties = existingProperties.concat(payload.property);
+			for (let i = 0; i < existingAnswers.length; i++) {
+				let el;
+
+				if (i !== payload.index) {
+					el = existingAnswers[i];
+				} else {
+					el = {
+						text: existingAnswers[payload.index].text,
+						correct: payload.correct,
+					};
+				}
+
+				newAnswers.push(el);
+			}
+
+			return {
+				...state,
+				question: {
+					...state.question,
+					multipleChoice: {
+						...state.question.multipleChoice,
+						answers: newAnswers,
+					},
+				},
+			};
+		}
+		case SET_MATCHING: {
+			return {
+				...state,
+				question: {
+					...state.question,
+					matching: payload,
+				},
+			};
+		}
+		case SET_MATCHING_PROPERTY: {
+			const existingProperties = state.question.matching.properties;
+			let newProperties: string[] = [];
+
+			for (let i = 0; i < existingProperties.length; i++) {
+				let el;
+				if (i !== payload.index) {
+					el = existingProperties[i];
+				} else {
+					el = payload.property;
+				}
+
+				newProperties.push(el);
 			}
 
 			return {
@@ -134,19 +233,21 @@ const reducer = (state: state = initialState, { type, payload }) => {
 				},
 			};
 		}
-		case ADD_MATCHING_VALUE: {
+		case SET_MATCHING_VALUE: {
 			const existingVals = state.question.matching.vals;
-			let newVals;
+			let newVals: string[] = [];
 
-			if (payload.index !== null) {
-				newVals = [
-					...existingVals.slice(0, payload.index - 1),
-					payload.val,
-					...existingVals.slice(payload.index + 1),
-				];
-			} else {
-				newVals = existingVals.concat(payload.val);
+			for (let i = 0; i < existingVals.length; i++) {
+				let el;
+				if (i !== payload.index) {
+					el = existingVals[i];
+				} else {
+					el = payload.val;
+				}
+
+				newVals.push(el);
 			}
+
 			return {
 				...state,
 				question: {
@@ -158,40 +259,17 @@ const reducer = (state: state = initialState, { type, payload }) => {
 				},
 			};
 		}
-		case ADD_QUESTION: {
-			return {
-				...state,
-				question: payload,
-			};
-		}
-		case ADD_MATCHING: {
-			return {
-				...state,
-				question: {
-					...state.question.multipleChoice,
-					matching: payload,
-				},
-			};
-		}
-		case ADD_MULTIPLECHOICE: {
-			return {
-				...state,
-				question: {
-					...state.question.matching,
-					multipleChoice: payload,
-				},
-			};
-		}
-		case SET_INFO: {
+		case SET_QUESTION_SUBMITTED: {
+			console.log("Payload: ", payload);
 			return {
 				...state,
 				question: {
 					...state.question,
-					info: payload,
+					submitted: payload,
 				},
 			};
 		}
-		case UPDATE_TIME_LEFT: {
+		case SET_TIME_LEFT: {
 			return {
 				...state,
 				timeLeft: payload,

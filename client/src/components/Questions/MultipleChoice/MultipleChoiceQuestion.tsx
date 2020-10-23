@@ -1,7 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
+import { connect } from "react-redux";
+import { setMultipleChoiceQuestion } from "../../../redux/actions";
+import state from "../../InterfaceDefaults/StateProps";
 
-const MultipleChoiceQuestion = ({ setQuestion, question }) => {
-	const [state, setState] = useState({ question: question });
+interface MCQuestionProps {
+	question?: String;
+	setQuestion: Function;
+}
+
+const MultipleChoiceQuestion: React.FC<MCQuestionProps> = ({
+	question,
+	setQuestion,
+}) => {
 	return (
 		<div>
 			<h3>Question</h3>
@@ -12,18 +22,20 @@ const MultipleChoiceQuestion = ({ setQuestion, question }) => {
 				aria-label="Question"
 				rows={5}
 				cols={50}
-				value={state.question}
+				value={question as string}
 				onChange={(e) => {
-					setState({
-						question: e.target.value,
-					});
-					if (setQuestion !== null) {
-						setQuestion(e.target.value);
-					}
+					setQuestion(e.target.value);
 				}}
 			></textarea>
 		</div>
 	);
 };
 
-export default MultipleChoiceQuestion;
+export default connect(
+	(state: state) => ({ question: state.question.multipleChoice.question }),
+	(dispatch) => {
+		return {
+			setQuestion: (question) => dispatch(setMultipleChoiceQuestion(question)),
+		};
+	}
+)(MultipleChoiceQuestion);

@@ -6,7 +6,7 @@ import Role from "./pages/Role";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./assets/css/root.css";
 import { socket } from "./config/Socket";
-import state from "./components/StateProps";
+import state from "./components/InterfaceDefaults/StateProps";
 
 const Main = ({ role, name, server, ...props }) => {
 	return (

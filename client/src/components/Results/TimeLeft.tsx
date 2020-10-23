@@ -1,19 +1,18 @@
-import React, { useEffect, useState } from "react";
-import "../assets/css/timeLeft.css";
+import React, { useEffect } from "react";
+import "../../assets/css/timeLeft.css";
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import { updateTimeLeft } from "../redux/actions";
-import state from "./StateProps";
+import { setTimeLeft } from "../../redux/actions";
+import state from "../InterfaceDefaults/StateProps";
 
 interface TimeProps {
 	socket: any;
 	timeLeft?: Object | undefined;
-	updateTimeLeft?: Function;
+	setTimeLeft?: Function;
 }
 
 const TimeLeft: React.FC<TimeProps> = ({
 	socket,
-	updateTimeLeft,
+	setTimeLeft,
 	...timeLeft
 }) => {
 	// const [time, setTime] = useState(0);
@@ -23,7 +22,7 @@ const TimeLeft: React.FC<TimeProps> = ({
 			// for some reason it is comparing it to the original state???
 			// had to include special case for 0
 			if (time !== timeLeft.timeLeft || time === 0) {
-				updateTimeLeft!(time);
+				setTimeLeft!(time);
 			}
 		});
 	});
@@ -38,11 +37,9 @@ export default connect(
 	(state: state) => {
 		return { timeLeft: state.timeLeft };
 	},
-	(dispatch) =>
-		bindActionCreators(
-			{
-				updateTimeLeft: updateTimeLeft,
-			},
-			dispatch
-		)
+	(dispatch) => {
+		return {
+			setTimeLeft: (timeLeft) => dispatch(setTimeLeft(timeLeft)),
+		};
+	}
 )(TimeLeft);

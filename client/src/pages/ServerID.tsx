@@ -3,15 +3,14 @@ import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { setServer } from "../redux/actions";
-import state from "../components/StateProps";
-// import { socket } from "../config/Socket";
+import state from "../components/InterfaceDefaults/StateProps";
 
-const ServerID = ({ role, setServer, name, socket, ...props }) => {
+const ServerID = ({ name, server, role, setServer, socket, ...props }) => {
 	const path = "/home";
 
 	let history = useHistory();
 
-	const [state, setState] = useState({ serverID: "", error: "" });
+	const [err, setErr] = useState("");
 
 	return (
 		<>
@@ -24,46 +23,41 @@ const ServerID = ({ role, setServer, name, socket, ...props }) => {
 				name="serverID"
 				type="text"
 				aria-label="Server ID"
-				value={state.serverID}
+				value={server}
 				onChange={(e) => {
-					const server = e.target.value;
+					const serverInput = e.target.value;
 					let error = "";
-					socket.emit("checkServer", server);
+					socket.emit("checkServer", serverInput);
 					socket.on("checkServerResponse", (exists) => {
 						if (exists && role === "Teacher") {
 							error = "Server name already taken";
 						} else if (!exists && role === "Student") {
 							error = "Server does not exist, check your spelling or retry.";
 						}
-
-						setState({
-							serverID: server,
-							error: error,
-						});
+						setServer(serverInput);
+						setErr(error);
 					});
 				}}
 			/>
-			<span className="error">{state.error}</span>
+			<span className="error">{err}</span>
 			<button
 				className="default"
 				onClick={() => {
 					if (role === "Teacher") {
-						socket.emit("createServer", [
-							{ name: name, server: state.serverID },
-						]);
+						socket.emit("createServer", [{ name: name, server: server }]);
 						socket.on("createServerResponse", (success) => {
 							if (success) {
-								setServer(state.serverID);
+								setServer(server);
 								history.push(path);
 							}
 						});
 					} else if (role === "Student") {
-						socket.emit("joinServer", state.serverID);
-						setServer(state.serverID);
+						socket.emit("joinServer", server);
+						setServer(server);
 						history.push(path);
 					}
 				}}
-				disabled={state.error !== "" || state.serverID === ""}
+				disabled={err !== "" || server === ""}
 			>
 				Continue
 			</button>

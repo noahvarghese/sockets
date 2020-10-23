@@ -4,26 +4,27 @@ export interface info {
 	server: String;
 }
 
-export interface quizInfo {
+export interface questionInfo {
 	time?: Number;
 	score?: Number;
 	type: String;
 }
 
 export interface question {
-	info: quizInfo;
+	info: questionInfo;
 	matching: matching;
 	multipleChoice: mc;
+	submitted: boolean;
+}
+
+export interface mcAnswer {
+	text: string;
+	correct?: boolean;
 }
 
 export interface mc {
 	question: String;
-	answers: [
-		{
-			answer: string;
-			correct?: Boolean;
-		}
-	];
+	answers: mcAnswer[];
 }
 
 export interface matching {
@@ -49,8 +50,9 @@ export const initialQuestion: question = {
 	},
 	multipleChoice: {
 		question: "",
-		answers: [{ answer: "", correct: false }],
+		answers: [{ text: "", correct: false }],
 	},
+	submitted: false,
 };
 
 export default state;

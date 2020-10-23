@@ -3,17 +3,14 @@ import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { setName } from "../redux/actions";
-import state from "../components/StateProps";
+import state from "../components/InterfaceDefaults/StateProps";
 
-const ScreenName = ({ role, setName, socket, ...props }) => {
+const ScreenName = ({ role, name, setName, socket, ...props }) => {
 	const path = "/serverID";
 
 	let history = useHistory();
 
-	const [state, setState] = useState({
-		screenName: "",
-		error: "",
-	});
+	const [err, setErr] = useState("");
 
 	return (
 		<>
@@ -22,44 +19,38 @@ const ScreenName = ({ role, setName, socket, ...props }) => {
 				name="screenName"
 				type="text"
 				aria-label="Screen Name"
-				value={state.screenName}
+				value={name}
 				onChange={(e) => {
-					const name = e.target.value;
-					let error = "";
+					const nameInput = e.target.value;
 					socket.emit("checkName", name);
 					socket.on("checkNameResponse", (exists) => {
+						let error = "";
 						if (exists) {
 							error = "Name already taken";
 						}
 
-						setState({
-							screenName: name,
-							error: error,
-						});
+						setErr(error);
+						setName(nameInput);
 					});
 				}}
 			/>
-			<span className="error">{state.error}</span>
+			<span className="error">{err}</span>
 			<button
 				className="default"
 				onClick={() => {
-					if (state.error === "") {
-						socket.emit("createName", [{ name: state.screenName, role: role }]);
+					if (err === "") {
+						socket.emit("createName", [{ name: name, role: role }]);
 						// socket.emit("createName", state.screenName);
 						socket.on("createNameResponse", (success) => {
 							if (success) {
-								setName(state.screenName);
 								history.push(path);
 							} else {
-								setState({
-									...state,
-									error: "This name is taken, please try another",
-								});
+								setErr("This name is taken, please try another");
 							}
 						});
 					}
 				}}
-				disabled={state.error !== "" || state.screenName === ""}
+				disabled={err !== "" || name === ""}
 			>
 				Continue
 			</button>
@@ -68,9 +59,7 @@ const ScreenName = ({ role, setName, socket, ...props }) => {
 };
 
 export default connect(
-	(state: state) => {
-		return { role: state.info.role };
-	},
+	(state: state) => ({ role: state.info.role, name: state.info.name }),
 	(dispatch) =>
 		bindActionCreators(
 			{

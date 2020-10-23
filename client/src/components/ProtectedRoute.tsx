@@ -3,13 +3,15 @@ import { Redirect, Route } from "react-router-dom";
 import Routes from "../config/Routes";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import state from "./StateProps";
+import state from "./InterfaceDefaults/StateProps";
 
 interface ProtectedRouteProps {
 	tag: String;
-	role: String;
-	server: String;
-	name: String;
+	info: {
+		role: String;
+		server: String;
+		name: String;
+	};
 	subProps: Object | null;
 }
 
@@ -24,9 +26,12 @@ const validate = (required, state) => {
 	return valid;
 };
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = (props) => {
-	const info = { role: props.role, server: props.server, name: props.name };
-	const { tag, subProps } = props;
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+	tag,
+	info,
+	subProps,
+	...props
+}) => {
 	const { required, path, Component } = Routes[tag as string];
 	const valid = validate(required, info);
 
@@ -38,6 +43,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = (props) => {
 };
 
 export default connect(
-	(state: state) => state.info,
+	(state: state) => ({ info: state.info }),
 	(dispatch) => bindActionCreators({}, dispatch)
 )(ProtectedRoute);

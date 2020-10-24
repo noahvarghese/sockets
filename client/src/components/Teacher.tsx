@@ -1,14 +1,19 @@
 import React from "react";
+import { connect } from "react-redux";
 import SelectQuestionType from "./Questions/SelectQuestionType";
+import state from "./InterfaceDefaults/StateProps";
 
-const Teacher = (setGlobalState: Function, ...props) => {
+const Teacher = ({ submitted, socket, ...props }) => {
 	return (
 		<div>
-			<h1>Teacher</h1>
-			<hr />
-			{/* <SelectQuestionType /> */}
+			<SelectQuestionType socket={socket} />
 		</div>
 	);
 };
 
-export default Teacher;
+export default connect(
+	(state: state) => ({
+		submitted: state.question.submitted,
+	}),
+	(_) => ({})
+)(Teacher);

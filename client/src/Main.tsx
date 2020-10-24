@@ -8,6 +8,8 @@ import "./assets/css/root.css";
 import { socket } from "./config/Socket";
 import state from "./components/InterfaceDefaults/StateProps";
 
+// This function shares the socket object with the rest of the components
+
 const Main = ({ role, name, server, ...props }) => {
 	return (
 		<>

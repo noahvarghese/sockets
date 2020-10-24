@@ -1,12 +1,15 @@
 import React from "react";
+import { connect } from "react-redux";
+import state from "./InterfaceDefaults/StateProps";
+import DisplayQuestion from "./Questions/DisplayQuestion";
 
-const Student = () => {
-	return (
-		<div>
-			<h1>Student</h1>
-			<hr />
-		</div>
-	);
+const Student = ({ submitted, socket }) => {
+	return <div>{!submitted ? <DisplayQuestion socket={socket} /> : null}</div>;
 };
 
-export default Student;
+export default connect(
+	(state: state) => ({
+		submitted: state.question.submitted,
+	}),
+	(_) => ({})
+)(Student);

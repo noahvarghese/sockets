@@ -16,6 +16,7 @@ import {
 	SET_QUESTION_SCORE,
 	RESET_QUESTION,
 	SET_MULTIPLECHOICE_ANSWER,
+	SET_QUESTION,
 	SET_QUESTION_SUBMITTED,
 } from "./actionTypes";
 
@@ -49,6 +50,13 @@ const reducer = (state: state = initialState, { type, payload }) => {
 					...state.info,
 					role: payload,
 				},
+			};
+		}
+		case SET_QUESTION: {
+			console.log("Payload: ", payload);
+			return {
+				...state,
+				question: payload,
 			};
 		}
 		case RESET_QUESTION: {

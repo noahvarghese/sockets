@@ -1,0 +1,18 @@
+.roleContainer {
+	display: flex;
+	align-items: center;
+	justify-items: center;
+	align-content: space-between;
+	justify-content: space-between;
+	margin-bottom: 2rem;
+}
+
+.roleContainer h1 {
+	display: inline-block;
+	margin-right: 1rem;
+	margin-bottom: 0rem;
+}
+
+.roleContainer div {
+	display: inline-block;
+}

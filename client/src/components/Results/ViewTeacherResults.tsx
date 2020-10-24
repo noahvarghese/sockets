@@ -1,5 +1,4 @@
 import React from "react";
-import TimeLeft from "./TimeLeft";
 import { connect } from "react-redux";
 import state from "../InterfaceDefaults/StateProps";
 import { resetQuestion } from "../../redux/actions";
@@ -13,7 +12,6 @@ interface ResultProps {
 const ViewResults: React.FC<ResultProps> = ({ socket, timeLeft, reset }) => {
 	return (
 		<div>
-			<TimeLeft socket={socket} />
 			{timeLeft !== 0 ? <h3>Waiting for results...</h3> : null}
 			<button
 				className="default"

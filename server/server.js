@@ -103,9 +103,9 @@ const __dirname = dirname(__filename);
 
             if (data[0].info.type === "Multiple Choice") {
                 let studentVersion = [];
-                data[0].multipleChoice.answers.forEach((answer, index) => {
+                data[0].multipleChoice.answers.forEach((answer) => {
                     studentVersion.push({
-                        answer: answer.answer,
+                        text: answer.text,
                         correct: false
                     });
                 });

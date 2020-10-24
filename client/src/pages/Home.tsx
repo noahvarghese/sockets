@@ -1,25 +1,38 @@
 import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import DisplayQuestion from "../components/Questions/DisplayQuestion";
-import SelectQuestionType from "../components/Questions/SelectQuestionType";
 import state from "../components/InterfaceDefaults/StateProps";
+import Teacher from "../components/Teacher";
+import Student from "../components/Student";
+import TimeLeft from "../components/Results/TimeLeft";
+import "../assets/css/roleContainer.css";
 
-const Home = ({ role, socket, ...props }) => {
+const Home = ({ role, type, timeLeft, submitted, socket, ...props }) => {
 	return (
 		<>
-			<h1>{role.toUpperCase()}</h1>
+			<div className="roleContainer">
+				<h1>{role}</h1>
+				{(type !== "" && role === "Student") ||
+				(submitted && role === "Teacher") ? (
+					<TimeLeft socket={socket} />
+				) : null}
+			</div>
 			<hr />
 			{role === "Teacher" ? (
-				<SelectQuestionType socket={socket} />
+				<Teacher socket={socket} />
 			) : (
-				<DisplayQuestion socket={socket} />
+				<Student socket={socket} />
 			)}
 		</>
 	);
 };
 
 export default connect(
-	(state: state) => ({ role: state.info.role }),
+	(state: state) => ({
+		role: state.info.role,
+		type: state.question.info.type,
+		timeLeft: state.timeLeft,
+		submitted: state.question.submitted,
+	}),
 	(dispatch) => bindActionCreators({}, dispatch)
 )(Home);

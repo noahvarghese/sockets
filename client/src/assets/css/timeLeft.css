@@ -7,14 +7,15 @@
 }
 
 .timeLeft {
+	max-width: 5rem;
 	font-size: 2rem;
 	border: 5px solid var(--primary-border-color);
 	padding: 1rem;
 	color: var(--main-fg-color);
 	border-radius: 5px;
 	background-color: rgba(0, 0, 0, 0.2);
-	position: relative;
+	/* position: relative;
 	top: 0.5rem;
 	right: -15rem;
-	margin: 1rem;
+	margin: 1rem; */
 }

@@ -2,15 +2,13 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import "../../assets/css/selectQuestion.css";
 import { setQuestionSubmitted } from "../../redux/actions";
-import ViewResults from "../Results/ViewResults";
+import ViewResults from "../Results/ViewTeacherResults";
 import state, { question } from "../InterfaceDefaults/StateProps";
 import QuestionInfo from "./QuestionInfo";
 
 const checkDataFilled = (question: question, submitted): boolean => {
 	let empty: boolean = false;
-	console.log(question);
 
-	console.log("Submitted: ", submitted);
 	if (
 		question.info.type === "" ||
 		Number(question.info.score) < 1 ||
@@ -21,6 +19,10 @@ const checkDataFilled = (question: question, submitted): boolean => {
 
 	if (question.info.type === "Multiple Choice") {
 		if (question.multipleChoice.question.trim() === "") {
+			empty = true;
+		}
+
+		if (question.multipleChoice.answers.length <= 1) {
 			empty = true;
 		}
 

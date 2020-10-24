@@ -41,10 +41,13 @@ export const resetQuestion = () => ({
 	payload: initialState.question,
 });
 
-export const setQuestion = (question) => ({
-	type: SET_QUESTION,
-	payload: question,
-});
+export const setQuestion = (question) => {
+	console.log(question);
+	return {
+		type: SET_QUESTION,
+		payload: question,
+	};
+};
 
 export const setQuestionInfo = (info) => ({
 	type: SET_QUESTION_INFO,

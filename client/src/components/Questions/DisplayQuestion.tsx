@@ -1,21 +1,29 @@
-import React, { useState, useEffect } from "react";
-import { bindActionCreators } from "redux";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
-import {
-	setMatchingProperty,
-	setMatchingValue,
-	setQuestion,
-} from "../../redux/actions";
-import MultipleChoiceAnswer from "./MultipleChoice/MultipleChoiceAnswer";
-import MultipleChoiceQuestion from "./MultipleChoice/MultipleChoiceQuestion";
-import state, { initialQuestion } from "../InterfaceDefaults/StateProps";
+import { setQuestion } from "../../redux/actions";
+import DisplayMultipleChoice from "./MultipleChoice/DisplayMultipleChoice";
+import DisplayMatching from "./MatchingPairs/DisplayMatching";
+import state, {
+	matching,
+	mc,
+	questionInfo,
+} from "../InterfaceDefaults/StateProps";
 import TimeLeft from "../Results/TimeLeft";
 
-const DisplayQuestion = ({
+interface DisplayQuestionProps {
+	info: questionInfo;
+	matching: matching;
+	multipleChoice: mc;
+	socket: any;
+	setQuestion: Function;
+}
+
+const DisplayQuestion: React.FC<DisplayQuestionProps> = ({
 	info,
 	matching,
 	multipleChoice,
 	socket,
+	setQuestion,
 	...props
 }) => {
 	useEffect(() => {
@@ -23,39 +31,32 @@ const DisplayQuestion = ({
 			// remove all
 			setQuestion(data);
 		});
-	}, []);
+	});
+
+	console.log(info, matching, multipleChoice);
+
+	const submitAnswer = () => {
+		socket.emit("submitAnswer", {
+			info: info,
+			matching: matching,
+			multipleChoice: multipleChoice,
+		});
+	};
 
 	return (
 		<>
-			{info.type !== "" ? <TimeLeft socket={socket} /> : null}
 			{info.type === "Multiple Choice" ? (
-				<>
-					<MultipleChoiceQuestion />
-					{multipleChoice.answers.map((answer, index) => (
-						<MultipleChoiceAnswer index={index} key={index} />
-					))}
-				</>
+				<DisplayMultipleChoice />
 			) : info.type === "Matching Pairs" ? (
-				matching.properties.map((property, index) => (
-					<div>
-						<input
-							type="text"
-							value={property as string}
-							key={index}
-							readOnly={true}
-						/>
-						<select>
-							<option></option>
-							{matching.vals.map((val, index) => (
-								<option key={index}>{val}</option>
-							))}
-						</select>
-					</div>
-				))
+				<DisplayMatching />
 			) : (
-				// <h1>Hi</h1>
 				<h3>Waiting for question...</h3>
 			)}
+			{info.type !== "" ? (
+				<button className="default" onClick={submitAnswer}>
+					Submit
+				</button>
+			) : null}
 		</>
 	);
 };
@@ -66,11 +67,9 @@ export default connect(
 		matching: state.question.matching,
 		multipleChoice: state.question.multipleChoice,
 	}),
-	(dispatch) =>
-		bindActionCreators(
-			{
-				setQuestion: setQuestion,
-			},
-			dispatch
-		)
+	(dispatch) => {
+		return {
+			setQuestion: (question) => dispatch(setQuestion(question)),
+		};
+	}
 )(DisplayQuestion);

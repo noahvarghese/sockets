@@ -21,7 +21,7 @@ const Score = ({ socket, score, setScore }) => {
 
 export default connect(
 	(state: state) => ({
-		score: state.question.info.score,
+		score: state.currentScore,
 	}),
 	(dispatch) => ({
 		setScore: (score) => dispatch(setScore(score)),

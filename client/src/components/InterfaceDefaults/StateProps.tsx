@@ -37,6 +37,7 @@ export interface state {
 	question: question;
 	matchingAnswers: String[];
 	timeLeft: Number;
+	currentScore: number;
 }
 
 export default state;

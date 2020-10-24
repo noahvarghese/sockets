@@ -55,7 +55,6 @@ const reducer = (state: state = initialState, { type, payload }) => {
 			};
 		}
 		case SET_QUESTION: {
-			console.log("Payload: ", payload);
 			let matchingAnswer: String[] = [""];
 			if (state.info.role === "Student") {
 				// start at one because matching answer should always have at least one?
@@ -311,10 +310,7 @@ const reducer = (state: state = initialState, { type, payload }) => {
 		case SET_SCORE: {
 			return {
 				...state,
-				info: {
-					...state.info,
-					score: payload,
-				},
+				currentScore: payload,
 			};
 		}
 		default:

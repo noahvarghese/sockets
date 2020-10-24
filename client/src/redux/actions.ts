@@ -44,7 +44,6 @@ export const resetQuestion = () => ({
 });
 
 export const setQuestion = (question) => {
-	console.log(question);
 	return {
 		type: SET_QUESTION,
 		payload: question,

@@ -14,7 +14,8 @@ import {
 // import redis from "redis";
 import RedisAccess from "./Util/RedisAccess.js";
 import {
-    isEmpty
+    isEmpty,
+    iterateCheckEquivalent
 } from "./Util/Functions.js";
 
 const __filename = fileURLToPath(
@@ -56,7 +57,11 @@ const __dirname = dirname(__filename);
             } = data[0];
 
             const result = await redisAccess.createItem("names", name, true, socket.id);
-            const success = result && await redisAccess.createItem(role, name, true);
+            let success = result && await redisAccess.createItem(role, name, true);
+
+            if (role === "Student") {
+                success = success && await redisAccess.createItem(name, 0);
+            }
 
             io.to(socket.id).emit("createNameResponse", success);
         });
@@ -88,15 +93,18 @@ const __dirname = dirname(__filename);
         socket.on("createQuestion", async data => {
             const name = await redisAccess.getValue(socket.id);
             const server = await redisAccess.getValue(name);
+            const question = {
+                ...data[0]
+            };
 
-            await redisAccess.createItem(server, JSON.stringify(data));
+            await redisAccess.createItem(server, JSON.stringify(question));
 
             // remove correct field from data
             let studentData = {
-                info: data[0].info,
-                matching: data[0].matching,
+                info: question.info,
+                matching: question.matching,
                 multipleChoice: {
-                    question: data[0].multipleChoice.question,
+                    question: question.multipleChoice.question,
                     answers: undefined
                 }
             };
@@ -123,6 +131,32 @@ const __dirname = dirname(__filename);
                 }
                 time -= 1;
             }, 1000);
+        });
+
+        socket.on("submitAnswer", async ({
+            answer,
+            server
+        }) => {
+            const name = await redisAccess.getValue(socket.id);
+            const question = JSON.parse(await redisAccess.getValue(server));
+            let score = await redisAccess.getValue(name);
+
+            const correct = iterateCheckEquivalent(question, answer);
+            console.log("Correct: ", correct);
+
+            if (correct) {
+                score = Number(question.info.score) + Number(score);
+                await redisAccess.createItem(name, score);
+            }
+            console.log("Score: ", score);
+
+            // return updated score to student
+            socket.emit("setScore", score);
+            // return students score to teacher
+            socket.emit("sendResponse", {
+                name: name,
+                score: score
+            });
         });
 
         socket.on("disconnect", async () => {

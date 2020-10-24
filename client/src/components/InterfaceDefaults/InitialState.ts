@@ -28,4 +28,5 @@ export const initialState: state = {
 	question: initialQuestion,
 	matchingAnswers: [""],
 	timeLeft: -1,
+	currentScore: 0,
 };

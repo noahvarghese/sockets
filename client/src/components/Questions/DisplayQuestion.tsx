@@ -14,6 +14,8 @@ interface DisplayQuestionProps {
 	matching: matching;
 	multipleChoice: mc;
 	matchingAnswers: String[];
+	server: String;
+	timeLeft: Number;
 	socket: any;
 	setQuestion: Function;
 	resetQuestion: Function;
@@ -24,6 +26,8 @@ const DisplayQuestion: React.FC<DisplayQuestionProps> = ({
 	matching,
 	multipleChoice,
 	matchingAnswers,
+	server,
+	timeLeft,
 	socket,
 	setQuestion,
 	resetQuestion,
@@ -38,32 +42,40 @@ const DisplayQuestion: React.FC<DisplayQuestionProps> = ({
 
 	const submitAnswer = () => {
 		socket.emit("submitAnswer", {
-			info: info,
-			matching: {
-				properties: matching.properties,
-				vals: matchingAnswers,
+			answer: {
+				info: info,
+				matching: {
+					properties: matching.properties,
+					vals: matchingAnswers,
+				},
+				multipleChoice: multipleChoice,
 			},
-			multipleChoice: multipleChoice,
+			server: server,
 		});
 		resetQuestion();
 	};
 
-	return (
-		<>
-			{info.type === "Multiple Choice" ? (
-				<DisplayMultipleChoice />
-			) : info.type === "Matching Pairs" ? (
-				<DisplayMatching />
-			) : (
-				<h3>Waiting for question...</h3>
-			)}
-			{info.type !== "" ? (
-				<button className="default" onClick={() => submitAnswer()}>
-					Submit
-				</button>
-			) : null}
-		</>
-	);
+	if (info.type !== "" && timeLeft === 0) {
+		submitAnswer();
+		return <h3>Waiting for question...</h3>;
+	} else {
+		return (
+			<>
+				{info.type === "Multiple Choice" ? (
+					<DisplayMultipleChoice />
+				) : info.type === "Matching Pairs" ? (
+					<DisplayMatching />
+				) : (
+					<h3>Waiting for question...</h3>
+				)}
+				{info.type !== "" ? (
+					<button className="default" onClick={() => submitAnswer()}>
+						Submit
+					</button>
+				) : null}
+			</>
+		);
+	}
 };
 
 export default connect(
@@ -72,6 +84,8 @@ export default connect(
 		matching: state.question.matching,
 		multipleChoice: state.question.multipleChoice,
 		matchingAnswers: state.matchingAnswers,
+		server: state.info.server,
+		timeLeft: state.timeLeft,
 	}),
 	(dispatch) => {
 		return {

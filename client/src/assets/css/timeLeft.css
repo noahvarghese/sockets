@@ -19,3 +19,11 @@
 	right: -15rem;
 	margin: 1rem; */
 }
+
+.timeLeft:first-of-type {
+	margin-right: 1rem;
+}
+
+.timeLeft p {
+	font-size: 1rem;
+}

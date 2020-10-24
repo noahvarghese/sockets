@@ -9,3 +9,8 @@
 - server checking if question is correct is incorrect
 
 - error on frontend when auto-submitting when time runs out
+
+## TODO
+
+- send student results to teacher
+- fix bugs

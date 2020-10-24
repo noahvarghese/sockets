@@ -4,19 +4,21 @@ import { setMultipleChoiceQuestion } from "../../../redux/actions";
 import state from "../../InterfaceDefaults/StateProps";
 
 interface MCQuestionProps {
-	question?: String;
+	question: String;
+	role: String;
 	setQuestion: Function;
 }
 
 const MultipleChoiceQuestion: React.FC<MCQuestionProps> = ({
 	question,
+	role,
 	setQuestion,
 }) => {
 	return (
 		<div>
 			<h3>Question</h3>
 			<textarea
-				readOnly={question !== ""}
+				readOnly={role === "Student"}
 				name="question"
 				placeholder="What is the question?"
 				aria-label="Question"
@@ -32,7 +34,10 @@ const MultipleChoiceQuestion: React.FC<MCQuestionProps> = ({
 };
 
 export default connect(
-	(state: state) => ({ question: state.question.multipleChoice.question }),
+	(state: state) => ({
+		question: state.question.multipleChoice.question,
+		role: state.info.role,
+	}),
 	(dispatch) => {
 		return {
 			setQuestion: (question) => dispatch(setMultipleChoiceQuestion(question)),

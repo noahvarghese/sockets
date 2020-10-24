@@ -1,30 +1,31 @@
-import state from "./StateProps";
-export const initialState: state = {
+import state, { info, question } from "./StateProps";
+
+export const initialInfo: info = {
+	name: "",
+	role: "",
+	server: "",
+};
+
+export const initialQuestion: question = {
 	info: {
-		name: "",
-		role: "",
-		server: "",
+		type: "",
+		score: undefined,
+		time: undefined,
 	},
-	question: {
-		info: {
-			type: "",
-			time: 0,
-			score: 0,
-		},
-		multipleChoice: {
-			question: "",
-			answers: [
-				{
-					text: "",
-					correct: false,
-				},
-			],
-		},
-		matching: {
-			properties: [""],
-			vals: [""],
-		},
-		submitted: false,
+	multipleChoice: {
+		question: "",
+		answers: [{ text: "", correct: false }],
 	},
+	matching: {
+		properties: [""],
+		vals: [""],
+	},
+	submitted: false,
+};
+
+export const initialState: state = {
+	info: initialInfo,
+	question: initialQuestion,
+	matchingAnswers: [""],
 	timeLeft: -1,
 };

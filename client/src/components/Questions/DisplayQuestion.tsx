@@ -8,7 +8,6 @@ import state, {
 	mc,
 	questionInfo,
 } from "../InterfaceDefaults/StateProps";
-import TimeLeft from "../Results/TimeLeft";
 
 interface DisplayQuestionProps {
 	info: questionInfo;
@@ -32,8 +31,6 @@ const DisplayQuestion: React.FC<DisplayQuestionProps> = ({
 			setQuestion(data);
 		});
 	});
-
-	console.log(info, matching, multipleChoice);
 
 	const submitAnswer = () => {
 		socket.emit("submitAnswer", {

@@ -18,6 +18,7 @@ import {
 	SET_MULTIPLECHOICE_ANSWER,
 	SET_QUESTION,
 	SET_QUESTION_SUBMITTED,
+	SET_MATCHING_ANSWERS,
 } from "./actionTypes";
 
 import state, { mcAnswer } from "../components/InterfaceDefaults/StateProps";
@@ -54,9 +55,17 @@ const reducer = (state: state = initialState, { type, payload }) => {
 		}
 		case SET_QUESTION: {
 			console.log("Payload: ", payload);
+			let matchingAnswer: String[] = [""];
+			if (state.info.role === "Student") {
+				// start at one because matching answer should always have at least one?
+				for (let i = 1; i < payload.matching.properties.length; i++) {
+					matchingAnswer.push("");
+				}
+			}
 			return {
 				...state,
 				question: payload,
+				matchingAnswers: matchingAnswer,
 			};
 		}
 		case RESET_QUESTION: {
@@ -268,7 +277,6 @@ const reducer = (state: state = initialState, { type, payload }) => {
 			};
 		}
 		case SET_QUESTION_SUBMITTED: {
-			console.log("Payload: ", payload);
 			return {
 				...state,
 				question: {
@@ -281,6 +289,22 @@ const reducer = (state: state = initialState, { type, payload }) => {
 			return {
 				...state,
 				timeLeft: payload,
+			};
+		}
+		case SET_MATCHING_ANSWERS: {
+			let newState: String[] = [];
+
+			for (let i = 0; i < state.matchingAnswers.length; i++) {
+				if (i !== payload.index) {
+					newState.push(state.matchingAnswers[i]);
+				} else {
+					newState.push(payload.value);
+				}
+			}
+
+			return {
+				...state,
+				matchingAnswers: newState,
 			};
 		}
 		default:

@@ -7,6 +7,7 @@ import MultipleChoiceQuestion from "./MultipleChoiceQuestion";
 const DisplayMultipleChoice = ({ multipleChoice }) => {
 	return (
 		<>
+			<h3>Multiple Choice</h3>
 			<MultipleChoiceQuestion />
 			{multipleChoice.answers.map((_, index) => (
 				<MultipleChoiceAnswer index={index} key={index} />

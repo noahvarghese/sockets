@@ -35,24 +35,8 @@ export interface matching {
 export interface state {
 	info: info;
 	question: question;
+	matchingAnswers: String[];
 	timeLeft: Number;
 }
-
-export const initialQuestion: question = {
-	info: {
-		type: "",
-		score: undefined,
-		time: undefined,
-	},
-	matching: {
-		properties: [""],
-		vals: [""],
-	},
-	multipleChoice: {
-		question: "",
-		answers: [{ text: "", correct: false }],
-	},
-	submitted: false,
-};
 
 export default state;

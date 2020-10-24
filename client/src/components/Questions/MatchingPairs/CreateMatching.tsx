@@ -36,7 +36,7 @@ const CreateMatching: React.FC<CreateMatchingProps> = ({
 				</button>
 				{matching.properties.length > 1 ? (
 					<button
-						className="default"
+						className="secondary"
 						onClick={() => {
 							let newState = {
 								properties: matching.properties.slice(

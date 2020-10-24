@@ -19,6 +19,7 @@ import {
 	SET_QUESTION,
 	SET_MULTIPLECHOICE_ANSWER,
 	SET_QUESTION_SUBMITTED,
+	SET_MATCHING_ANSWERS,
 } from "./actionTypes";
 
 export const setName = (name) => ({
@@ -120,4 +121,9 @@ export const setQuestionSubmitted = (submitted: boolean) => ({
 export const setTimeLeft = (time) => ({
 	type: SET_TIME_LEFT,
 	payload: time,
+});
+
+export const setMatchingAnswers = (value: string, index: number) => ({
+	type: SET_MATCHING_ANSWERS,
+	payload: { value: value, index: index },
 });

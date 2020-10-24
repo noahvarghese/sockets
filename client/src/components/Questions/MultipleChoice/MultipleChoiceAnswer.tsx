@@ -1,3 +1,4 @@
+import { info } from "console";
 import React from "react";
 import { connect } from "react-redux";
 import {
@@ -8,6 +9,7 @@ import state, { mcAnswer } from "../../InterfaceDefaults/StateProps";
 
 interface MCAnswerProps {
 	answers?: mcAnswer[];
+	role: String;
 	index: Number;
 	setAnswerText: Function;
 	setAnswerCorrect: Function;
@@ -15,6 +17,7 @@ interface MCAnswerProps {
 
 const MultipleChoiceAnswer: React.FC<MCAnswerProps> = ({
 	answers,
+	role,
 	index,
 	setAnswerText,
 	setAnswerCorrect,
@@ -26,13 +29,14 @@ const MultipleChoiceAnswer: React.FC<MCAnswerProps> = ({
 			<input
 				type="checkbox"
 				name="correct"
-				aria-label="Correct"
+				aria-label="Is Correct"
 				checked={answer.correct as boolean}
 				onChange={(e) => {
 					setAnswerCorrect(e.target.checked, index);
 				}}
 			/>
 			<input
+				readOnly={role === "Student"}
 				type="text"
 				name="answer"
 				aria-label="Answer"
@@ -47,7 +51,10 @@ const MultipleChoiceAnswer: React.FC<MCAnswerProps> = ({
 };
 
 export default connect(
-	(state: state) => ({ answers: state.question.multipleChoice.answers }),
+	(state: state) => ({
+		answers: state.question.multipleChoice.answers,
+		role: state.info.role,
+	}),
 	(dispatch) => {
 		return {
 			setAnswerText: (text: string, index: number) =>

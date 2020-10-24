@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
-import { setQuestion } from "../../redux/actions";
+import { resetQuestion, setQuestion } from "../../redux/actions";
 import DisplayMultipleChoice from "./MultipleChoice/DisplayMultipleChoice";
 import DisplayMatching from "./MatchingPairs/DisplayMatching";
 import state, {
@@ -13,16 +13,20 @@ interface DisplayQuestionProps {
 	info: questionInfo;
 	matching: matching;
 	multipleChoice: mc;
+	matchingAnswers: String[];
 	socket: any;
 	setQuestion: Function;
+	resetQuestion: Function;
 }
 
 const DisplayQuestion: React.FC<DisplayQuestionProps> = ({
 	info,
 	matching,
 	multipleChoice,
+	matchingAnswers,
 	socket,
 	setQuestion,
+	resetQuestion,
 	...props
 }) => {
 	useEffect(() => {
@@ -35,9 +39,13 @@ const DisplayQuestion: React.FC<DisplayQuestionProps> = ({
 	const submitAnswer = () => {
 		socket.emit("submitAnswer", {
 			info: info,
-			matching: matching,
+			matching: {
+				properties: matching.properties,
+				vals: matchingAnswers,
+			},
 			multipleChoice: multipleChoice,
 		});
+		resetQuestion();
 	};
 
 	return (
@@ -50,7 +58,7 @@ const DisplayQuestion: React.FC<DisplayQuestionProps> = ({
 				<h3>Waiting for question...</h3>
 			)}
 			{info.type !== "" ? (
-				<button className="default" onClick={submitAnswer}>
+				<button className="default" onClick={() => submitAnswer()}>
 					Submit
 				</button>
 			) : null}
@@ -63,10 +71,12 @@ export default connect(
 		info: state.question.info,
 		matching: state.question.matching,
 		multipleChoice: state.question.multipleChoice,
+		matchingAnswers: state.matchingAnswers,
 	}),
 	(dispatch) => {
 		return {
 			setQuestion: (question) => dispatch(setQuestion(question)),
+			resetQuestion: () => dispatch(resetQuestion()),
 		};
 	}
 )(DisplayQuestion);

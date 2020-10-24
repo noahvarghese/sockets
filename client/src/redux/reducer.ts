@@ -19,6 +19,7 @@ import {
 	SET_QUESTION,
 	SET_QUESTION_SUBMITTED,
 	SET_MATCHING_ANSWERS,
+	SET_SCORE,
 } from "./actionTypes";
 
 import state, { mcAnswer } from "../components/InterfaceDefaults/StateProps";
@@ -305,6 +306,15 @@ const reducer = (state: state = initialState, { type, payload }) => {
 			return {
 				...state,
 				matchingAnswers: newState,
+			};
+		}
+		case SET_SCORE: {
+			return {
+				...state,
+				info: {
+					...state.info,
+					score: payload,
+				},
 			};
 		}
 		default:

@@ -18,7 +18,6 @@ const TimeLeft: React.FC<TimeProps> = ({
 	// const [time, setTime] = useState(0);
 	useEffect(() => {
 		socket.on("timeLeft", (time) => {
-			console.log(time);
 			// for some reason it is comparing it to the original state???
 			// had to include special case for 0
 			if (time !== timeLeft.timeLeft || time === 0) {
@@ -28,6 +27,7 @@ const TimeLeft: React.FC<TimeProps> = ({
 	});
 	return (
 		<div className="timeLeft">
+			<p>Time Left</p>
 			{timeLeft.timeLeft! > -1 ? timeLeft.timeLeft : null}
 		</div>
 	);

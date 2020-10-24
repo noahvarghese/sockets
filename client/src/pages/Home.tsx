@@ -6,6 +6,7 @@ import Teacher from "../components/Teacher";
 import Student from "../components/Student";
 import TimeLeft from "../components/Results/TimeLeft";
 import "../assets/css/roleContainer.css";
+import Score from "../components/Results/Score";
 
 const Home = ({ role, type, timeLeft, submitted, socket, ...props }) => {
 	return (
@@ -16,6 +17,7 @@ const Home = ({ role, type, timeLeft, submitted, socket, ...props }) => {
 				(submitted && role === "Teacher") ? (
 					<TimeLeft socket={socket} />
 				) : null}
+				{role === "Student" ? <Score socket={socket} /> : null}
 			</div>
 			<hr />
 			{role === "Teacher" ? (

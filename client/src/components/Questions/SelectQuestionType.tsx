@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import "../../assets/css/selectQuestion.css";
 import { setQuestionSubmitted } from "../../redux/actions";
-import ViewResults from "../Results/ViewTeacherResults";
+import ViewResults from "../Results/ViewResults";
 import state, { question } from "../InterfaceDefaults/StateProps";
 import QuestionInfo from "./QuestionInfo";
 

@@ -14,6 +14,7 @@ import state, {
 	questionInfo,
 } from "../InterfaceDefaults/StateProps";
 import { isTryStatement } from "typescript";
+import ViewResults from "../Results/ViewResults";
 
 interface DisplayQuestionProps {
 	info: questionInfo;
@@ -81,6 +82,7 @@ const DisplayQuestion: React.FC<DisplayQuestionProps> = ({
 			) : (
 				<>
 					<h3>{correct !== "" ? correct : null}</h3>
+					<ViewResults socket={socket} />
 					<h3>Waiting for question...</h3>
 				</>
 			)}

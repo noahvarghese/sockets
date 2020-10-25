@@ -59,8 +59,7 @@ const __dirname = dirname(__filename);
                 role
             } = data[0];
 
-            const result = await redisAccess.createItem("names", name, true, socket.id);
-            let success = result && await redisAccess.createItem(role, name, true);
+            let success = await redisAccess.createItem("names", name, true, socket.id);
 
             if (role === "Student") {
                 success = success && await redisAccess.createItem(name, 0);
@@ -135,6 +134,31 @@ const __dirname = dirname(__filename);
                 }
                 time -= 1;
             }, 1000);
+
+            // send all scores
+
+            const ids = Object.keys(io.sockets.adapter.rooms);
+
+            let scores = [];
+
+            for (let i = 0; i < ids.length; i++) {
+
+                if (ids[i] !== server) {
+                    const tmpName = await redisAccess.getValue(ids[i]);
+                    const tmpScore = Number(await redisAccess.getValue(tmpName));
+
+                    // teacher is included, but the value stored is the server, which is a string
+                    if (!isNaN(tmpScore)) {
+
+                        scores.push({
+                            name: tmpName,
+                            score: tmpScore
+                        });
+                    }
+                }
+            }
+
+            io.to(socket.id).emit("sendResponse", scores);
         });
 
         socket.on("submitAnswer", async ({
@@ -169,7 +193,7 @@ const __dirname = dirname(__filename);
 
             if (correct) {
                 score = Number(question.info.score) + Number(score);
-                if (!await redisAccess.createItem(name, String(score))) {
+                if (!await redisAccess.createItem(name, score)) {
                     console.log("ERROR");
                 }
             }
@@ -178,22 +202,31 @@ const __dirname = dirname(__filename);
             // return updated score to student
             socket.emit("setScore", score);
 
-            // get all sockets in room, and enuerate over them
-            // check if the value stored matches the server sent by the student
-            const keys = Object.keys(io.sockets.adapter.rooms[server].sockets);
+            // send all scores
 
-            for (let i = 0; i < keys.length; i++) {
-                const teacherName = await redisAccess.getValue(keys[i]);
-                const value = await redisAccess.getValue(teacherName);
+            const ids = Object.keys(io.sockets.adapter.rooms);
 
-                if (value === server) {
-                    io.to(keys[i]).emit("sendResponse", {
-                        name,
-                        score
-                    });
-                    break;
+            let scores = [];
+
+            for (let i = 0; i < ids.length; i++) {
+
+                if (ids[i] !== server) {
+                    const tmpName = await redisAccess.getValue(ids[i]);
+                    const tmpScore = Number(await redisAccess.getValue(tmpName));
+
+                    // teacher is included, but the value stored is the server, which is a string
+                    if (!isNaN(tmpScore)) {
+
+                        scores.push({
+                            name: tmpName,
+                            score: tmpScore
+                        });
+                    }
                 }
             }
+
+            io.in(server).emit("sendResponse", scores);
+
         });
 
         socket.on("disconnect", async () => {
@@ -202,7 +235,7 @@ const __dirname = dirname(__filename);
             const name = await redisAccess.getValue(socket.id);
             const server = await redisAccess.getValue(name);
 
-            if (!isEmpty(name) && !isEmpty(server)) {
+            if (!isEmpty(name) || !isEmpty(server)) {
                 // console.log(`Disconnect ${socket.id}: ${name}, ${server}`)
 
                 const headCount = io.sockets.adapter.rooms.length;

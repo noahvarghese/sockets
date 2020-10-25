@@ -12,11 +12,11 @@ interface ResultProps {
 
 const compare = (first, second) => {
 	if (first.score < second.score) {
-		return -1;
+		return 1;
 	}
 
 	if (first.score > second.score) {
-		return 1;
+		return -1;
 	}
 
 	return 0;
@@ -31,28 +31,43 @@ const ViewResults: React.FC<ResultProps> = ({ socket, timeLeft, reset }) => {
 	]);
 
 	useEffect(() => {
-		socket.on("sendResponse", ({ name, score }) => {
-			const studentsCopy: { name: string; score: number }[] = [];
+		socket.on(
+			"sendResponse",
+			({ name, score }: { name: string; score: number }) => {
+				const studentsCopy: { name: string; score: number }[] = [];
 
-			if (students.length === 1 && students[0].name === "") {
-				setStudents([{ name, score }]);
-			} else {
-				// update student records
+				if (students.length === 1 && students[0].name === "") {
+					setStudents([{ name, score }]);
+				} else {
+					// update student records
 
-				for (let i = 0; i < students.length; i++) {
-					let newStudent = students[i];
+					let studentFound = false;
 
-					if (students[i].name === name && students[i].score !== score) {
-						newStudent.score = score;
+					for (let i = 0; i < students.length; i++) {
+						let newStudent = {
+							name: students[i].name,
+							score: students[i].score,
+						};
+
+						if (students[i].name === name) {
+							studentFound = true;
+							if (students[i].score !== score) {
+								newStudent.score = score;
+							}
+						}
+
+						studentsCopy.push(newStudent);
 					}
 
-					studentsCopy.push(newStudent);
-				}
+					if (!studentFound) {
+						studentsCopy.push({ name: name, score: score });
+					}
 
-				studentsCopy.sort(compare);
-				setStudents(studentsCopy);
+					studentsCopy.sort(compare);
+					setStudents(studentsCopy);
+				}
 			}
-		});
+		);
 	});
 
 	return (

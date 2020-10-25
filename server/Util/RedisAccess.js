@@ -33,52 +33,39 @@ export default class RedisAccess {
 
     createItem = async (key, value, set = false, secondaryKey = null) => {
 
-        // let success = false;
+        let method;
+        let success = false;
 
-        const exists = await this.queryField(key, value, set);
-
-
-        if (exists === false) {
-
-            let method;
-            let success = false;
-
-            if (set) {
-                method = "sadd";
-            } else {
-                method = "set";
-            }
-            const result = await new Promise((res, rej) => {
-                this.client[method](key, value, async (err, reply) => {
-                    if (err) {
-                        console.log(err);
-                    }
-                    if (!err && reply === 1 && secondaryKey !== null) {
-                        res(await this.createItem(secondaryKey, value));
-                    }
-                    res({
-                        err,
-                        reply
-                    });
+        if (set) {
+            method = "sadd";
+        } else {
+            method = "set";
+        }
+        const result = await new Promise((res, rej) => {
+            this.client[method](key, value, async (err, reply) => {
+                if (err) {
+                    console.log(err);
+                }
+                if (!err && reply === 1 && secondaryKey !== null) {
+                    res(await this.createItem(secondaryKey, value));
+                }
+                res({
+                    err: err,
+                    reply: reply
                 });
             });
+        });
 
-
-            // bug where on page refresh assignment doesn't work?
-            // result returns undefined
-            // maybe something not being deleted?
-
-            if (typeof result === "object") {
-                if (isValidResponse(result.reply) && isEmpty(result.err)) {
-                    success = true;
-                }
-            } else {
-                if (isValidResponse(result)) {
-                    success = true;
-                }
+        if (typeof result === "object") {
+            if (isValidResponse(result.reply) && isEmpty(result.err)) {
+                success = true;
             }
-            return success;
+        } else {
+            if (isValidResponse(result)) {
+                success = true;
+            }
         }
+        return success;
     }
 
     getValue = async (key) => {

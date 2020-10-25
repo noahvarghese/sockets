@@ -21,6 +21,7 @@ import {
 	SET_QUESTION_SUBMITTED,
 	SET_MATCHING_ANSWERS,
 	SET_SCORE,
+	STUDENT_SUBMITTED,
 } from "./actionTypes";
 
 export const setName = (name) => ({
@@ -131,4 +132,9 @@ export const setMatchingAnswers = (value: string, index: number) => ({
 export const setScore = (score) => ({
 	type: SET_SCORE,
 	payload: score,
+});
+
+export const studentSubmitted = () => ({
+	type: STUDENT_SUBMITTED,
+	payload: {},
 });

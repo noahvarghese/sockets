@@ -14,6 +14,8 @@ const ServerID = ({ name, server, role, setServer, socket, ...props }) => {
 
 	return (
 		<>
+			<h1>Welcome</h1>
+			<hr />
 			<h2>
 				{role === "Teacher"
 					? "Create A Custom Server ID"

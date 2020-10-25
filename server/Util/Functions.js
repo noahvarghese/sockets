@@ -27,10 +27,17 @@ export const iterateCheckEquivalent = (firstObject, secondObject) => {
 
                     // this works for arrays as well
                     if (type === "object") {
-                        equivalent = iterateCheckEquivalent(firstObject[prop], secondObject[prop]);
+                        // only run recursively if no incorrect answers have been found
+                        // we are not awarding part marks currently
+                        if (equivalent) {
+                            equivalent = iterateCheckEquivalent(firstObject[prop], secondObject[prop]);
+                        } else {
+                            break;
+                        }
                     } else {
                         if (firstObject[prop] !== secondObject[prop]) {
                             equivalent = false;
+                            break;
                         }
                     }
                 }

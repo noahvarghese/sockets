@@ -46,8 +46,10 @@ const __dirname = dirname(__filename);
     io.on("connection", socket => {
 
         socket.on("checkName", async (name) => {
-            const exists = await redisAccess.queryField("names", name, true);
-            io.to(socket.id).emit("checkNameResponse", exists);
+            const existsInNames = await redisAccess.queryField("names", name, true);
+            const existsInServer = await redisAccess.queryField("servers", name, true);
+
+            io.to(socket.id).emit("checkNameResponse", existsInNames || existsInServer);
         });
 
         socket.on("createName", async (data) => {
@@ -67,8 +69,10 @@ const __dirname = dirname(__filename);
         });
 
         socket.on("checkServer", async (server) => {
-            const exists = await redisAccess.queryField("servers", server, true);
-            io.to(socket.id).emit("checkServerResponse", exists);
+            const existsInServer = await redisAccess.queryField("servers", server, true);
+            const existsInNames = await redisAccess.queryField("names", server, true);
+
+            io.to(socket.id).emit("checkServerResponse", existsInServer || existsInNames);
         });
 
         socket.on("createServer", async (data) => {
@@ -87,15 +91,12 @@ const __dirname = dirname(__filename);
 
         socket.on("joinServer", async (server) => {
             socket.join(server);
-            // console.log(io.sockets.adapter.rooms);
         });
 
         socket.on("createQuestion", async data => {
             const name = await redisAccess.getValue(socket.id);
             const server = await redisAccess.getValue(name);
-            const question = {
-                ...data[0]
-            };
+            const question = data[0];
 
             await redisAccess.createItem(server, JSON.stringify(question));
 
@@ -124,7 +125,7 @@ const __dirname = dirname(__filename);
             socket.to(server).emit("sendQuestion", studentData);
             let time = studentData.info.time;
             let interval = setInterval(() => {
-                // braodcast time remaingin to everyone in room
+                // broadcast time remaining to everyone in room
                 io.in(server).emit("timeLeft", time);
                 if (time === 0) {
                     clearInterval(interval);
@@ -137,19 +138,40 @@ const __dirname = dirname(__filename);
             answer,
             server
         }) => {
+
             const name = await redisAccess.getValue(socket.id);
             const question = JSON.parse(await redisAccess.getValue(server));
+
             let score = await redisAccess.getValue(name);
 
-            const correct = iterateCheckEquivalent(question, answer);
-            console.log("Correct: ", correct);
+            let firstObject;
+            let secondObject;
+
+            if (question.info.type === "Multiple Choice") {
+                firstObject = answer;
+                secondObject = question.multipleChoice.answers;
+
+            } else if (question.info.type === "Matching Pairs") {
+                firstObject = {
+                    properties: question.matching.properties,
+                    vals: question.matching.vals
+                };
+                secondObject = {
+                    properties: answer.properties,
+                    vals: answer.vals
+                };
+            }
+
+            const correct = iterateCheckEquivalent(firstObject, secondObject);
 
             if (correct) {
                 score = Number(question.info.score) + Number(score);
-                await redisAccess.createItem(name, score);
+                if (!await redisAccess.createItem(name, String(score))) {
+                    console.log("ERROR");
+                }
             }
-            console.log("Score: ", score);
 
+            socket.emit("sendCorrect", correct ? "Correct!" : "Incorrect");
             // return updated score to student
             socket.emit("setScore", score);
             // return students score to teacher

@@ -20,10 +20,14 @@ import {
 	SET_QUESTION_SUBMITTED,
 	SET_MATCHING_ANSWERS,
 	SET_SCORE,
+	STUDENT_SUBMITTED,
 } from "./actionTypes";
 
 import state, { mcAnswer } from "../components/InterfaceDefaults/StateProps";
-import { initialState } from "../components/InterfaceDefaults/InitialState";
+import {
+	initialQuestion,
+	initialState,
+} from "../components/InterfaceDefaults/InitialState";
 
 const reducer = (state: state = initialState, { type, payload }) => {
 	switch (type) {
@@ -311,6 +315,14 @@ const reducer = (state: state = initialState, { type, payload }) => {
 			return {
 				...state,
 				currentScore: payload,
+			};
+		}
+		case STUDENT_SUBMITTED: {
+			return {
+				...state,
+				question: initialQuestion,
+				matchingAnswers: [""],
+				timeLeft: -1,
 			};
 		}
 		default:

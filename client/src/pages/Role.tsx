@@ -11,6 +11,8 @@ const Role = ({ setRole, ...props }) => {
 
 	return (
 		<>
+			<h1>Welcome</h1>
+			<hr />
 			<h2>Are You A Teacher Or Student?</h2>
 			<ul>
 				<li>

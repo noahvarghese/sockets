@@ -7,12 +7,16 @@ import Student from "../components/Student";
 import TimeLeft from "../components/Results/TimeLeft";
 import "../assets/css/roleContainer.css";
 import Score from "../components/Results/Score";
+import { info } from "console";
 
-const Home = ({ role, type, timeLeft, submitted, socket, ...props }) => {
+const Home = ({ info, type, timeLeft, submitted, socket, ...props }) => {
+	const role = info.role;
 	return (
 		<>
 			<div className="roleContainer">
-				<h1>{role}</h1>
+				<h1>
+					{role}: {info.name}
+				</h1>
 				{(type !== "" && role === "Student") ||
 				(submitted && role === "Teacher") ? (
 					<TimeLeft socket={socket} />
@@ -31,7 +35,7 @@ const Home = ({ role, type, timeLeft, submitted, socket, ...props }) => {
 
 export default connect(
 	(state: state) => ({
-		role: state.info.role,
+		info: state.info,
 		type: state.question.info.type,
 		timeLeft: state.timeLeft,
 		submitted: state.question.submitted,

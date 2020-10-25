@@ -14,6 +14,8 @@ const ScreenName = ({ role, name, setName, socket, ...props }) => {
 
 	return (
 		<>
+			<h1>Welcome</h1>
+			<hr />
 			<h2>Enter Your Screen Name</h2>
 			<input
 				name="screenName"

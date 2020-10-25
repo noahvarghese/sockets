@@ -14,3 +14,7 @@
 
 - send student results to teacher
 - fix bugs
+
+## Features
+
+- support part marks

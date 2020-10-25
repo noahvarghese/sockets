@@ -15,12 +15,6 @@ const Main = ({ role, name, server, ...props }) => {
 		<>
 			<Router>
 				<div className="root">
-					{!name || !server || !role ? (
-						<>
-							<h1>Welcome</h1>
-							<hr />
-						</>
-					) : null}
 					<Route path="/" exact render={() => <Role />} />
 					<ProtectedRoute tag="screenName" subProps={{ socket: socket }} />
 					<ProtectedRoute tag="serverID" subProps={{ socket: socket }} />

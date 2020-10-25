@@ -15,7 +15,8 @@ import {
 import RedisAccess from "./Util/RedisAccess.js";
 import {
     isEmpty,
-    iterateCheckEquivalent
+    iterateCheckEquivalent,
+    shuffle
 } from "./Util/Functions.js";
 
 const __filename = fileURLToPath(
@@ -110,9 +111,9 @@ const __dirname = dirname(__filename);
                 }
             };
 
-            if (data[0].info.type === "Multiple Choice") {
+            if (question.info.type === "Multiple Choice") {
                 let studentVersion = [];
-                data[0].multipleChoice.answers.forEach((answer) => {
+                question.multipleChoice.answers.forEach((answer) => {
                     studentVersion.push({
                         text: answer.text,
                         correct: false
@@ -120,6 +121,8 @@ const __dirname = dirname(__filename);
                 });
 
                 studentData.multipleChoice.answers = studentVersion;
+            } else if (question.info.type === "Matching Pairs") {
+                studentData.matching.vals = shuffle(studentData.matching.vals)
             }
 
             socket.to(server).emit("sendQuestion", studentData);

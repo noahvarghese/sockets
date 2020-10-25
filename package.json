@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+	"build": "mkdir ./server/public && cd ./client && npm i && npm run build && cd ../server && npm i",
 	"start": "cd ./server && npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

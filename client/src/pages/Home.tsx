@@ -7,7 +7,6 @@ import Student from "../components/Student";
 import TimeLeft from "../components/Results/TimeLeft";
 import "../assets/css/roleContainer.css";
 import Score from "../components/Results/Score";
-import { info } from "console";
 
 const Home = ({ info, type, timeLeft, submitted, socket, ...props }) => {
 	const role = info.role;

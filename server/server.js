@@ -174,11 +174,23 @@ const __dirname = dirname(__filename);
             socket.emit("sendCorrect", correct ? "Correct!" : "Incorrect");
             // return updated score to student
             socket.emit("setScore", score);
-            // return students score to teacher
-            socket.emit("sendResponse", {
-                name: name,
-                score: score
-            });
+
+            // get all sockets in room, and enuerate over them
+            // check if the value stored matches the server sent by the student
+            const keys = Object.keys(io.sockets.adapter.rooms[server].sockets);
+
+            for (let i = 0; i < keys.length; i++) {
+                const teacherName = await redisAccess.getValue(keys[i]);
+                const value = await redisAccess.getValue(teacherName);
+
+                if (value === server) {
+                    io.to(keys[i]).emit("sendResponse", {
+                        name,
+                        score
+                    });
+                    break;
+                }
+            }
         });
 
         socket.on("disconnect", async () => {

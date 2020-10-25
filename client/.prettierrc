@@ -1,0 +1,6 @@
+{
+  "useTabs": true,
+  "editor.tabSize": 4,
+  "editor.formatOnSave": true,
+  "editor.detectIndentation": false
+}

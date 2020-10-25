@@ -1,0 +1,18 @@
+.resultContainer {
+	display: flex;
+	justify-content: space-evenly;
+	align-content: space-between;
+	align-items: center;
+	justify-items: center;
+}
+
+.resultContainer h4 {
+	display: inline-block;
+	width: 5rem;
+	color: white;
+}
+
+.results > .resultContainer > .header {
+	font-size: 1.2rem;
+	margin-bottom: 1rem;
+}
